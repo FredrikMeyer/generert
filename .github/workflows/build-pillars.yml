@@ -31,11 +31,8 @@ jobs:
 
       - name: Set up xvfb
         run: |
-          sudo apt-get install xvb libxrender1 libxts6 libxi6
+          sudo apt-get install xvfb libxrender1 libxtst6 libxi6
           sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
           export DISPLAY=":1"
-
-      - name: Run plot
-        run: |
           cd pillars
           lein run

@@ -1,7 +1,7 @@
 (defproject generert "0.1.1-SNAPSHOT"
   :description "Generert..."
-  :url "http://example.com/FIXME"
-  :main pillars.core
+  :url "https://fredrikmeyer.net/FIXME"
+  :main generert.core
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :java-source-paths ["src/java"]

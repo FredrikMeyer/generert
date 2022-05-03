@@ -31,7 +31,6 @@ jobs:
           sudo apt-get install xvfb libxrender1 libxtst6 libxi6
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-      - name: Run sketch 
+      - name: Run sketch
         run: |
-          cd pillars
-          CI_RUN=true DISPLAY=':99.0' lein run
+          CI_RUN=true DISPLAY=':99.0' lein run pillars

@@ -7,5 +7,4 @@
   :java-source-paths ["src/java"]
   :source-paths ["src/clj"]
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [quil "3.1.0"]
-                 [generative-art-tools "0.1.0-SNAPSHOT"]])
+                 [quil "3.1.0"]])

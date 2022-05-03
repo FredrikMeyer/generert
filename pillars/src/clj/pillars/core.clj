@@ -74,8 +74,8 @@
   (when (System/getenv "CI_RUN")
     (println "Done drawing, exiting")
     (q/exit)
-    )
-)
+    (System/exit 0))
+  )
 
 (defn update-state [state]
     state)

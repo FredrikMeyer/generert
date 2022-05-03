@@ -29,15 +29,12 @@ jobs:
           # (optional) To avoid rate limit errors please provide github token
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run headless test
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: 'CI_RUN=true lein run'
-          working-directory: ./pillars
-          # options: #optional
-      # - name: Set up xvfb
-      #   run: |
-      #     sudo apt-get install xvfb libxrender1 libxtst6 libxi6
-      #     Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-      #     cd pillars
-      #     CI_RUN=true DISPLAY=':99.0' lein run
+      - name: Set up xvfb
+        run: |
+          sudo apt-get install xvfb libxrender1 libxtst6 libxi6
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: Run sketch 
+        run: |
+          cd pillars
+          CI_RUN=true DISPLAY=':99.0' lein run

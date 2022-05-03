@@ -1,5 +1,5 @@
-(defproject pillars "0.1.1-SNAPSHOT"
-  :description "To quickly start a Quil project."
+(defproject generert "0.1.1-SNAPSHOT"
+  :description "Generert..."
   :url "http://example.com/FIXME"
   :main pillars.core
   :license {:name "Eclipse Public License"

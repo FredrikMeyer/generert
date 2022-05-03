@@ -32,7 +32,7 @@ jobs:
       - name: Set up xvfb
         run: |
           sudo apt-get install xvfb libxrender1 libxtst6 libxi6
-          sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
+          Xvfb :1 -screen 0 1152x900x24+32 -fbdir /tmp &
           export DISPLAY=":1"
           cd pillars
           CI_RUN=true DISPLAY=localhost:1.0 lein run

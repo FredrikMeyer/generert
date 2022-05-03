@@ -5,6 +5,8 @@
 (def w 900)
 (def h 900)
 
+(defn -main [& args])
+
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
   (q/stroke 100 100)
@@ -69,8 +71,13 @@
     ))
 
 
-  (defn update-state [state]
-    state))
+  (if (System/getenv "CI_RUN")
+    (println "Done drawing, exiting")
+    (q/exit))
+)
+
+(defn update-state [state]
+    state)
 
 (defn draw-state [state]
   (q/background 0)

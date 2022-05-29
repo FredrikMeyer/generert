@@ -1,6 +1,7 @@
 (ns pillars.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [tools.drawing :as td]))
 
 (def w 900)
 (def h 900)
@@ -12,9 +13,6 @@
   (q/stroke 100 100)
   (q/frame-rate 5)
   {})
-
-
-;; (rand-nth (list 1 2 3 4))
 
 (def colors [20 80 100])
 
@@ -89,24 +87,13 @@
   (q/no-loop)
   )
 
-(defn save-on-click [state event]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "pillars" (hash state) "_" (q/random 0 1) ".tif"))
-  state)
-
-(defn redraw [old-state event]
-  (when (= (:key event) :r)
-    (q/redraw))
-  old-state)
-
 (q/defsketch pillars
   :title "You spin my circle right round"
   :size [w h]
   :setup setup
   :update update-state
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (td/save-on-click-handler "pillars")
+  :key-pressed td/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

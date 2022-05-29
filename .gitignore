@@ -1,5 +1,6 @@
 .DS_Store
 .cpcache
 target/
-nrepl-port
+.nrepl-port
 .lein-repl-history
+.lein-failures

@@ -35,6 +35,6 @@ jobs:
       - name: Publish docs
         # if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
-          cd fronted/dist
+          cd frontend/dist
           aws s3 sync . s3:// generert-cloudfrontands3s3bucketb81f9695-1vubdjwpyg0vm/ --delete --no-progress
           aws cloudfront create-invalidation --distribution-id E1CJJZ47YG6OXV --paths "/*"

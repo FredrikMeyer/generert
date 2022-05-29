@@ -4,11 +4,20 @@ import moon from "./images/moon.png";
 import colorCircle from "./images/color_circle.png";
 import { useState } from "react";
 
-const images = [concentric, moon, colorCircle];
-
-function Image({ src }: { src: string }) {
-  return <img src={src} style={{ objectFit: "contain" }} />;
-}
+const images = [
+  {
+    url: concentric,
+    name: "Concentric",
+  },
+  {
+    url: moon,
+    name: "Moon",
+  },
+  {
+    url: colorCircle,
+    name: "Colored system",
+  },
+];
 
 function App() {
   const [activeImage, setActiveImage] = useState(0);
@@ -42,7 +51,7 @@ function App() {
         }}
         onClick={() => setActiveImage((activeImage + 1) % images.length)}
       >
-        <Image src={images[activeImage]} />
+        <img src={images[activeImage].url} alt={images[activeImage].name} />
       </div>
     </div>
   );

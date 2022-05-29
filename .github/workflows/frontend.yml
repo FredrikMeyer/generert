@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     env:
       working-directory: ./frontend
     name: Build and test 

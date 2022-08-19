@@ -63,7 +63,7 @@
     (q/redraw))
   old-state)
 
-(q/defsketch two-lines
+(q/defsketch #_:clj-kondo/ignore two-lines
   :title "You spin my circle right round"
   :size [w h]
   :setup setup

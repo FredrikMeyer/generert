@@ -20,18 +20,14 @@
   (let [frac (/ 1 (* std (Math/sqrt (* 2 Math/PI))))
         frac2 (/ -1 (* 2 std std))
         diff (Math/pow (- x mean) 2)]
-    (* frac (Math/exp (* frac2 diff)))
-    )
-  )
+    (* frac (Math/exp (* frac2 diff)))))
 
 ;; TODO put this into gen-art-tools
-(defn gaussian-window [f start end ]
+(defn gaussian-window [f start end]
   ;;
   (let [mean (/ (- end start) 2)
         std 1]
-    (fn [x] (* (f x) (gaussian mean std x)))
-    )
-  )
+    (fn [x] (* (f x) (gaussian mean std x)))))
 
 ;; ((gaussian-window (fn [x] x) 0 100) 100)
 
@@ -45,10 +41,8 @@
     (q/begin-shape)
     (doseq [x (range 50 (inc (- w 50)) (/ (- w 100) 10))]
       (let [y (+ (* h 0.05) (q/random 0 (* h 0.9)))]
-        (q/vertex x y))
-      )
-    (q/end-shape :close)
-    )
+        (q/vertex x y)))
+    (q/end-shape :close))
 
   (q/stroke 100 100)
   (doseq [j (range 1 10)]
@@ -62,21 +56,17 @@
               y (- (* n h 0.8) -100)
               hfn (fn [z] y)
               yy (gaussian-window hfn 100 (- w 100))]
-          (q/vertex x y)
-        ))
-    (q/vertex (- w 50) (/ h 2))
-    (q/end-shape)
-    ))
-
+          (q/vertex x y)))
+      (q/vertex (- w 50) (/ h 2))
+      (q/end-shape)))
 
   (when (System/getenv "CI_RUN")
     (println "Done drawing, exiting")
     (q/exit)
-    (System/exit 0))
-  )
+    (System/exit 0)))
 
 (defn update-state [state]
-    state)
+  state)
 
 (defn draw-state [state]
   (q/background 0)
@@ -84,10 +74,9 @@
   (draw)
   (q/start-loop)
   ;; (println "Done")
-  (q/no-loop)
-  )
+  (q/no-loop))
 
-(q/defsketch pillars
+(q/defsketch #_:clj-kondo/ignore pillars
   :title "You spin my circle right round"
   :size [w h]
   :setup setup

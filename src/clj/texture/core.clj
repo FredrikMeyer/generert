@@ -7,7 +7,7 @@
 
 (def cx (/ w 2))
 (def cy (/ h 2))
- 
+
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
   (q/stroke 100 20)
@@ -18,26 +18,20 @@
   (let [theta (q/random 0 (* 2 q/PI))
         x (+ cx (* r (Math/cos theta)))
         y (+ cy (* r (Math/sin theta)))]
-    [x y]
-    ))
+    [x y]))
 
 (defn random-line-circle [r]
   (let [p1 (random-point-circle r)
         p2 (random-point-circle r)]
-    (q/line p1 p2)
-    )
-  )
+    (q/line p1 p2)))
 
 (defn central-piece [diff max-radius n-lines]
-  (doseq [r (range 50 max-radius diff)] 
+  (doseq [r (range 50 max-radius diff)]
     (doseq [_ (range 1 n-lines)]
-      (random-line-circle r)
-      ))
-  )
-
+      (random-line-circle r))))
 
 (defn draw []
-  (comment 
+  (comment
     (q/with-translation [-220 -220]
       (central-piece 25 201 500))
 
@@ -74,7 +68,7 @@
     (q/redraw))
   old-state)
 
-(q/defsketch texture
+(q/defsketch #_:clj-kondo/ignore texture
   :title "You spin my circle right round"
   :size [w h]
   :setup setup

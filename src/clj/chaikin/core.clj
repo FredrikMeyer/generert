@@ -22,8 +22,7 @@
   [(q/random x0 x1) (q/random y0 y1)])
 
 (defn random-pts [n [x0 x1] [y0 y1]]
-  (for [_ (range n)] (random-pt [x0 x1] [y0 y1]))
-  )
+  (for [_ (range n)] (random-pt [x0 x1] [y0 y1])))
 
 (defn draw-points [pts]
   (loop [ps pts]
@@ -44,26 +43,15 @@
 
 (defn draw []
   (q/stroke 100)
-  ;; (let [l [[450 450] (random-pt [0 w] [0 900]) [50 100]
-  ;;          [150 300] (random-pt [0 w] [0 900]) [200 500] [300 100] [350 400]
-  ;;          [400 100] (random-pt [0 w] [0 900]) [450 450]]]
-  ;;   (->> l
-  ;;        iterate-chaikin
-  ;;        iterate-chaikin
-  ;;        iterate-chaikin
-  ;;        iterate-chaikin
-  ;;        iterate-chaikin
-  ;;        draw-points))
 
   (doseq [x (range 50 800 140)
           y (range 50 800 140)]
-    (let [pts (random-pts 6 [x (+ x 100)] [y (+ y 100)])]
+    (let [pts (random-pts 10 [x (+ x 100)] [y (+ y 100)])]
       (->> pts
            iterate-chaikin
            iterate-chaikin
-           draw-points))
-    )
-  )
+           iterate-chaikin
+           draw-points))))
 
 (defn update-state [state]
   state)

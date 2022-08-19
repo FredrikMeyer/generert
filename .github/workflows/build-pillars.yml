@@ -34,6 +34,9 @@ jobs:
       # - name: Run sketch
       #   run: |
       #     CI_RUN=true DISPLAY=':99.0' lein run pillars
+      - name: Lint
+        run: |
+          clojure -Sdeps '{:deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}}' -M -m clj-kondo.main --lint src
 
       - name: Run tests
         run: |

@@ -73,7 +73,7 @@
     (q/redraw))
   old-state)
 
-(q/defsketch #_:clj-kondo/ignore two-lines
+(q/defsketch #_:clj-kondo/ignore chaikin
   :title "You spin my circle right round"
   :size [w h]
   :setup setup

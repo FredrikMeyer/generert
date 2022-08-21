@@ -6,8 +6,6 @@
 (def w 900)
 (def h 900)
 
-(gtl/point-on-line [0 0] [1 1] 0.25)
-
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
   (q/stroke 100 10)
@@ -18,10 +16,15 @@
         [q1 q2] x]
     [(+ p1 q1) (+ p2 q2)]))
 
-(defn random-pt [[x0 x1] [y0 y1]]
+(defn random-pt
+  "Generate a random point inside the square bunded by [x0, x1] and [y0, y1]."
+  [[x0 x1] [y0 y1]]
   [(q/random x0 x1) (q/random y0 y1)])
 
-(defn random-pts [n [x0 x1] [y0 y1]]
+(defn random-pts
+  "Generates n random points bounded by [x0, x1] and [y0, y1]. See [[random-pt]]."
+  [n [x0 x1] [y0 y1]]
+
   (for [_ (range n)] (random-pt [x0 x1] [y0 y1])))
 
 (defn draw-points [pts]
@@ -44,32 +47,33 @@
 (defn draw []
   (q/stroke 100)
 
-  (doseq [x (range 50 800 140)
-          y (range 50 800 140)]
-    (let [pts (random-pts 10 [x (+ x 100)] [y (+ y 100)])]
+  (doseq [x (range 50 850 40)
+          y (range 50 850 40)]
+    (let [pts (random-pts 10 [x (+ x 40)] [y (+ y 40)])]
       (->> pts
            iterate-chaikin
            iterate-chaikin
            iterate-chaikin
+           ((fn [l] (concat [[x y]] l [[(+ x 40) (+ y 0)]])))
            draw-points))))
 
 (defn update-state [state]
   state)
 
-(defn draw-state [state]
+(defn draw-state [_]
   (q/background 0)
   (time (draw))
   (println "Done")
   (q/no-loop))
 
-(defn save-on-click [state event]
+(defn save-on-click [state _]
   (println "Saved")
   (println state)
   (q/save-frame (str "two-lines" (hash state) "_" (q/random 0 1) ".tif"))
   state)
 
 (defn redraw [old-state event]
-  (if (= (:key event) :r)
+  (when (= (:key event) :r)
     (q/redraw))
   old-state)
 

@@ -9,7 +9,6 @@
     (q/save-frame (str name (hash state) "_" (q/random 0 1) ".tif"))
     state))
 
-
 (defn redraw [old-state event]
   (when (= (:key event) :r)
     (q/redraw)

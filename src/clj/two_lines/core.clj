@@ -1,7 +1,8 @@
 (ns two-lines.core
   (:require [quil.core :as q]
             [quil.middleware :as m]
-            [tools.lines :as gtl]))
+            [tools.lines :as gtl]
+            [tools.drawing :as tools]))
 
 (def w 900)
 (def h 900)
@@ -46,30 +47,19 @@
 (defn update-state [state]
   state)
 
-(defn draw-state [state]
+(defn draw-state [_]
   (q/background 0)
   (time (draw))
   (println "Done")
   (q/no-loop))
-
-(defn save-on-click [state event]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "two-lines" (hash state) "_" (q/random 0 1) ".tif"))
-  state)
-
-(defn redraw [old-state event]
-  (if (= (:key event) :r)
-    (q/redraw))
-  old-state)
 
 (q/defsketch #_:clj-kondo/ignore two-lines
   :title "You spin my circle right round"
   :size [w h]
   :setup setup
   :update update-state
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (tools/save-on-click-handler "two-lines")
+  :key-pressed tools/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

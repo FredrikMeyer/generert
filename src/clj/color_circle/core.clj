@@ -42,7 +42,7 @@
   ;; (q/no-loop)
   )
 
-(defn save-on-click [state event]
+(defn save-on-click [state _]
   (println "Saved")
   (println state)
   (q/save-frame (str "color-circle" (hash state) "_" (q/random 0 1) ".tif"))
@@ -58,7 +58,7 @@
     (q/redraw))
   old-state)
 
-(q/defsketch color-circle
+(q/defsketch #_:clj-kondo/ignore color-circle
   :title "You spin my circle right round"
   :size [w h]
   :setup setup

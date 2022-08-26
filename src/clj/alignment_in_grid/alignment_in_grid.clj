@@ -1,6 +1,7 @@
-(ns clj.color-circle.alignment-in-grid
+(ns alignment-in-grid.alignment-in-grid
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [tools.drawing :as dr]))
 
 (def w 900)
 (def h 900)
@@ -66,19 +67,14 @@
       (assoc :saturation (:x event))
       (assoc :brightness (:y event))))
 
-(defn redraw [old-state event]
-  (when (= (:key event) :r)
-    (q/redraw))
-  old-state)
-
 (q/defsketch #_:clj-kondo/ignore pixels
   :title "You spin my circle right round"
   :size [w h]
   :setup setup
   :update update-state
   :mouse-moved mouse-moved
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (dr/save-on-click-handler "pixels")
+  :key-pressed dr/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

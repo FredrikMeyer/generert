@@ -6,7 +6,7 @@
 (def w 900)
 (def h 900)
 
-(defn -main [& args])
+(defn -main [& _])
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
@@ -36,7 +36,7 @@
   ;; pillar-x lines pillar-y
   (q/fill 100 10)
   (q/no-stroke)
-  (doseq [j (range 1 500)]
+  (doseq [_ (range 1 500)]
     (q/fill (rand-nth colors) 100 100 10)
     (q/begin-shape)
     (doseq [x (range 50 (inc (- w 50)) (/ (- w 100) 10))]
@@ -45,7 +45,7 @@
     (q/end-shape :close))
 
   (q/stroke 100 100)
-  (doseq [j (range 1 10)]
+  (doseq [_ (range 1 10)]
     (q/fill 100 40)
     (q/begin-shape)
     (q/vertex 50 (/ h 2))
@@ -53,9 +53,8 @@
       (doseq [x (range 100 (inc (- w 100)) (/ (- w 100) 500))]
         (let [n (q/noise (+ (* 100 seed) (/ (+ x) 100)))
               ;; TODO start at zero in a nice way
-              y (- (* n h 0.8) -100)
-              hfn (fn [z] y)
-              yy (gaussian-window hfn 100 (- w 100))]
+              y (- (* n h 0.8) -100)]
+
           (q/vertex x y)))
       (q/vertex (- w 50) (/ h 2))
       (q/end-shape)))
@@ -68,7 +67,7 @@
 (defn update-state [state]
   state)
 
-(defn draw-state [state]
+(defn draw-state [_]
   (q/background 0)
   ;; (time (draw))
   (draw)

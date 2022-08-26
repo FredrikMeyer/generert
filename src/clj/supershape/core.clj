@@ -1,6 +1,7 @@
 (ns supershape.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [tools.drawing :as dr]))
 
 (def w 800)
 (def h 800)
@@ -47,30 +48,19 @@
 (defn update-state [state]
   state)
 
-(defn draw-state [state]
+(defn draw-state [_]
   (q/background 0)
   (time (draw))
   (println "Done")
   (q/no-loop))
-
-(defn save-on-click [state event]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "supershape" (hash state) "_" (q/random 0 1) ".tif"))
-  state)
-
-(defn redraw [old-state event]
-  (if (= (:key event) :r)
-    (q/redraw))
-  old-state)
 
 (q/defsketch #_:clj-kondo/ignore supershape
   :title "You spin my circle right round"
   :size [w h]
   :setup setup
   :update update-state
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (dr/save-on-click-handler "supershape")
+  :key-pressed dr/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

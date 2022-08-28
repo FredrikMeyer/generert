@@ -7,4 +7,5 @@
   :java-source-paths ["src/java"]
   :source-paths ["src/clj"]
   :dependencies [[org.clojure/clojure "1.11.1"]
+                 [org.clojure/core.match "1.0.0"]
                  [quil "3.1.0"]])

@@ -1,8 +1,10 @@
 (ns lsystemquil.core
-  (:require [quil.core :as q]
-            [quil.middleware :as m]
-            [lsystemquil.lsystem :as l]
-            [clojure.core.match :as match]))
+  (:require
+   [clojure.core.match :as match]
+   [lsystemquil.lsystem :as l]
+   [quil.core :as q]
+   [quil.middleware :as m]
+   [tools.drawing :as dr]))
 
 (def w 800)
 (def h 800)
@@ -22,7 +24,6 @@
   (q/translate 0 (- length))
   (q/pop-style))
 
-;; (def angle (* 1 0.39269875))
 (def angle (q/radians 20.5))
 
 (defn rotate [a noise]
@@ -109,24 +110,13 @@
   (println "Done.")
   (q/no-loop))
 
-(defn save-on-click [state _]
-  (println "Saved")
-  (println "State: " state)
-  (q/save-frame (str "lsystemquil" (hash state) "_" (q/random 0 1) ".png"))
-  state)
-
-(defn redraw [old-state event]
-  (when (= (:key event) :r)
-    (q/redraw))
-  old-state)
-
 (q/defsketch #_:clj-kondo/ignore lsystemquil
   :title "You spin my circle right round"
   :size [w h]
   :setup setup
   :update update-state
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (dr/save-on-click-handler "lsystemquil")
+  :key-pressed dr/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

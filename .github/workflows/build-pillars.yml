@@ -1,4 +1,4 @@
-name: Build pillars
+name: Build and test Clojure
 
 on: [push]
 
@@ -20,8 +20,8 @@ jobs:
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@5.0
         with:
-          cli: 1.10.3.986 # Clojure CLI based on tools.deps
-          lein: 2.9.8     # Leiningen
+          cli: 1.11.1.1155  # Clojure CLI based on tools.deps
+          lein: 2.9.10     # Leiningen
           
           # (optional) To avoid rate limit errors please provide github token
           github-token: ${{ secrets.GITHUB_TOKEN }}

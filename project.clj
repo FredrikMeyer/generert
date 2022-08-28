@@ -6,5 +6,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :java-source-paths ["src/java"]
   :source-paths ["src/clj"]
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure "1.11.1"]
                  [quil "3.1.0"]])

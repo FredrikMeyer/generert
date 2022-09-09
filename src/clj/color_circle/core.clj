@@ -1,6 +1,7 @@
 (ns color-circle.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [tools.drawing :as t]))
 
 (def w 600)
 (def h 600)
@@ -42,21 +43,10 @@
   ;; (q/no-loop)
   )
 
-(defn save-on-click [state _]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "color-circle" (hash state) "_" (q/random 0 1) ".tif"))
-  state)
-
 (defn mouse-moved [state event]
   (-> state
       (assoc :saturation (:x event))
       (assoc :brightness (:y event))))
-
-(defn redraw [old-state event]
-  (when (= (:key event) :r)
-    (q/redraw))
-  old-state)
 
 (q/defsketch #_:clj-kondo/ignore color-circle
   :title "You spin my circle right round"
@@ -64,8 +54,8 @@
   :setup setup
   :update update-state
   :mouse-moved mouse-moved
-  :mouse-clicked save-on-click
-  :key-pressed redraw
+  :mouse-clicked (t/save-on-click-handler "color-circle")
+  :key-pressed t/redraw
   :draw draw-state
   :features [:keep-on-top :no-bind-output :pause-on-error]
   :middleware [m/fun-mode m/pause-on-error])

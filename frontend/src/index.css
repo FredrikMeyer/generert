@@ -9,6 +9,8 @@ html, body {
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 img {
@@ -20,10 +22,30 @@ img {
 #root {
   height: 100%;
   width: 100%;
-  padding-top: 1vh;
-  padding-bottom: 1vh;
+  padding-top: 0vh;
+  padding-bottom: 0vh;
 }
 
 h1 {
-  font-size: 3.75rem;
+  font-size: 1.75rem;
+}
+
+main {
+  padding: 10px;
+}
+
+.footer {
+  text-align: center;
+}
+
+.images {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image {
+  width: 40vw;
+  aspect-ratio: 1;
 }

@@ -1,8 +1,8 @@
 import "./App.css";
 import { useState } from "react";
-import texture from "./images/texture-15128758_0.43535608.png";
-import texture2 from "./images/texture-15128758_0.058291435.png";
-import concentric from "./images/concentric-15128758_0.9700706.png";
+import texture from "../../images/texture-15128758_0.43535608.png";
+import texture2 from "../../images/texture-15128758_0.058291435.png";
+import concentric from "../../images/concentric-15128758_0.9700706.png";
 
 function Header() {
   return (

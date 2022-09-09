@@ -3,16 +3,11 @@ import { useState } from "react";
 import texture from "../../images/texture-15128758_0.43535608.png";
 import texture2 from "../../images/texture-15128758_0.058291435.png";
 import concentric from "../../images/concentric-15128758_0.9700706.png";
+import githubIcon from "./githubIcon.svg";
 
 function Header() {
   return (
-    <div
-      style={{
-        borderBottom: "3px double black",
-        marginBottom: "5px",
-        textAlign: "center",
-      }}
-    >
+    <div className="header">
       <h1>Generert</h1>
     </div>
   );
@@ -30,6 +25,7 @@ function Gallery({
         <div key={i} onClick={() => setActiveImage(i)} className="image">
           <img
             src={i}
+            alt={i}
             style={{
               borderRadius: "50%",
               objectFit: "cover",
@@ -53,7 +49,7 @@ function SingleImage({ close, image }: { image: string; close: () => void }) {
         justifyContent: "center",
       }}
     >
-      <img src={image} />
+      <img src={image} alt={image} />
     </div>
   );
 }
@@ -67,6 +63,7 @@ function App() {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
+        justifyContent: "space-between",
         maxHeight: "100vh",
       }}
     >
@@ -78,7 +75,14 @@ function App() {
           <Gallery setActiveImage={setActiveImage} />
         )}
       </main>
-      <div className="footer">Fredrik Meyer</div>
+      <div className="footer">
+        <div>Fredrik Meyer</div>
+        <div>
+          <a href="https://github.com/FredrikMeyer/generert">
+            <img src={githubIcon} alt="Github Icon" />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

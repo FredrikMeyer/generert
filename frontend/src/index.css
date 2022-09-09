@@ -26,6 +26,12 @@ img {
   padding-bottom: 0vh;
 }
 
+.header {
+  border-bottom: 3px double black;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
 h1 {
   font-size: 1.75rem;
 }
@@ -36,6 +42,12 @@ main {
 
 .footer {
   text-align: center;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .images {
@@ -48,4 +60,16 @@ main {
 .image {
   width: 40vw;
   aspect-ratio: 1;
+}
+
+@media (min-width: 600px) {
+  .image {
+    width: 30vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .image {
+    width: 80vw;
+  }
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import texture from "../../images/texture-15128758_0.43535608.png";
 import texture2 from "../../images/texture-15128758_0.058291435.png";
 import concentric from "../../images/concentric-15128758_0.9700706.png";
+import twoLines from "../../images/two-lines-15128758_0.68674845.png";
 import githubIcon from "./githubIcon.svg";
 
 function Header() {
@@ -18,7 +19,7 @@ function Gallery({
 }: {
   setActiveImage: (image: string) => void;
 }) {
-  const images = [texture, texture2, concentric];
+  const images = [texture, texture2, concentric, twoLines];
   return (
     <div className="images">
       {images.map((i) => (

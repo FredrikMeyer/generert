@@ -24,16 +24,7 @@ function Gallery({
     <div className="images">
       {images.map((i) => (
         <div key={i} onClick={() => setActiveImage(i)} className="image">
-          <img
-            src={i}
-            alt={i}
-            style={{
-              borderRadius: "50%",
-              objectFit: "cover",
-              width: "100%",
-              maxHeight: "100%",
-            }}
-          />
+          <img src={i} alt={i} className="image-img" />
         </div>
       ))}
     </div>

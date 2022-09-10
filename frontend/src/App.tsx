@@ -14,24 +14,48 @@ function Header() {
   );
 }
 
+type Image = {
+  name: string;
+  url: string;
+  description: string;
+};
+
+const images: Image[] = [
+  {
+    name: "Texture",
+    url: texture,
+    description: "Random lines placed in circles.",
+  },
+  {
+    name: "Moon",
+    url: texture2,
+    description: "Random lines placed in a circle.",
+  },
+  {
+    name: "Contric",
+    url: concentric,
+    description: "Concentric circles drawn with some randomness.",
+  },
+  { name: "Two Lines", url: twoLines, description: "Lines between two lines." },
+];
+
 function Gallery({
   setActiveImage,
 }: {
-  setActiveImage: (image: string) => void;
+  setActiveImage: (image: Image) => void;
 }) {
-  const images = [texture, texture2, concentric, twoLines];
   return (
     <div className="images">
       {images.map((i) => (
-        <div key={i} onClick={() => setActiveImage(i)} className="image">
-          <img src={i} alt={i} className="image-img" />
+        <div key={i.url} onClick={() => setActiveImage(i)} className="image">
+          <img src={i.url} alt={i.description} className="image-img" />
         </div>
       ))}
     </div>
   );
 }
 
-function SingleImage({ close, image }: { image: string; close: () => void }) {
+function SingleImage({ close, image }: { image: Image; close: () => void }) {
   return (
     <div
       onClick={() => close()}
@@ -41,13 +65,18 @@ function SingleImage({ close, image }: { image: string; close: () => void }) {
         justifyContent: "center",
       }}
     >
-      <img src={image} alt={image} />
+      <figure>
+        <img src={image.url} alt={image.description} />
+        <figcaption>
+          <b>{image.name}</b>: {image.description}
+        </figcaption>
+      </figure>
     </div>
   );
 }
 
 function App() {
-  const [activeImage, setActiveImage] = useState<null | string>(null);
+  const [activeImage, setActiveImage] = useState<null | Image>(null);
 
   return (
     <div

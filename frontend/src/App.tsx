@@ -2,8 +2,8 @@ import "./App.css";
 import { useState } from "react";
 import texture from "../../images/texture-15128758_0.43535608.png";
 import texture2 from "../../images/texture-15128758_0.058291435.png";
-import concentric from "../../images/concentric-15128758_0.9700706.png";
-import twoLines from "../../images/two-lines-15128758_0.68674845.png";
+import concentric from "../../images/concentric/concentric-15128758_0.9700706.png";
+import twoLines from "../../images/two-lines/two-lines-15128758_0.68674845.png";
 import githubIcon from "./githubIcon.svg";
 
 function Header() {
@@ -32,7 +32,7 @@ const images: Image[] = [
     description: "Random lines placed in a circle.",
   },
   {
-    name: "Contric",
+    name: "Contentric",
     url: concentric,
     description: "Concentric circles drawn with some randomness.",
   },

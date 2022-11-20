@@ -29,8 +29,6 @@
         std 1]
     (fn [x] (* (f x) (gaussian mean std x)))))
 
-;; ((gaussian-window (fn [x] x) 0 100) 100)
-
 (defn draw []
   ;; Your drawing here
   ;; pillar-x lines pillar-y

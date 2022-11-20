@@ -1,5 +1,11 @@
 # Generert
 
+Tests:
+
+```
+lein tests
+```
+
 ## Linting
 
 Linted with [clj-kondo](https://github.com/clj-kondo/clj-kondo).

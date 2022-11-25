@@ -14,17 +14,16 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build and test 
+    name: Build and test
+    defaults:
+      working-directory: frontend
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: cd frontend && yarn install
-      # - run: yarn prettier
-      # - run: yarn typecheck
-      # - run: yarn lint
-      - run: cd frontend && yarn build
+      - run: yarn install
+      - run: yarn build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -35,6 +34,6 @@ jobs:
       - name: Publish docs
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
-          cd frontend/dist
+          cd dist
           aws s3 sync . s3://generert-cloudfrontands3s3bucketb81f9695-1vubdjwpyg0vm/ --delete --no-progress
           aws cloudfront create-invalidation --distribution-id E1CJJZ47YG6OXV --paths "/*"

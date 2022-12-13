@@ -5,19 +5,22 @@
             [tools.random :as r]
             [tools.points :as p]
             [tools.lines :as gtl]
-            [kdtree :as kd]))
+            ;; [kdtree :as kd]
+            ))
 
 (def w 900)
 (def h 900)
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
-  (q/stroke 100 10)
+  (q/stroke 100 50)
+  (q/ellipse-mode :radius)
+  (q/rect-mode :radius)
   {})
 
 (defrecord Circle [center ^double radius])
 
-(defn pt-outside-circle [^Circle circle [^double a ^double b]]
+(defn pt-outside-circle? [^Circle circle [^double a ^double b]]
   (let [dist-center (p/distance-sq [a b] (:center circle))]
     (> dist-center (:radius circle))))
 
@@ -64,13 +67,12 @@
         radius (:radius circle)
         theta (r/random 0 q/TWO-PI)]
     [(+ x (* radius (Math/sin theta)))
-     (+ y (* radius (Math/cos theta)))
-     ]
-    ))
+     (+ y (* radius (Math/cos theta)))]))
 
 (defn compute-packing [points-goal max-iterations]
   (loop [n 0
-         circles [(Circle. [(/ w 2) (/ h 2)] 50)
+         circles [
+                  (Circle. [(/ w 2) (/ h 2)] 50)
                   ;; (Circle. [(/ w 4) (/ h 4)] 0)
                   ;; (Circle. [(/ (* 3 w) 4) (/ (* 3 h) 4)] 0)
                   ]]
@@ -97,16 +99,22 @@
     (let [[x y] (:center circle)]
       (q/ellipse x y r r))))
 
+(defn draw-circle-2 [^Circle circle]
+  (let [[x y] (:center circle)
+        r (:radius circle)]
+    (q/ellipse x y r r)
+    )
+  )
+
 (defn draw []
   (q/stroke 100)
   ;; (q/no-stroke)
   (q/no-fill)
   ;; (q/fill 100 50)
-  (q/ellipse-mode :radius)
-  (q/rect-mode :radius)
+
 
   (doseq [c (compute-packing 1000 3000)]
-    (draw-circle c))
+    (draw-circle-2 c))
 
 ;;; old
   (comment

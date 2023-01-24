@@ -36,7 +36,7 @@ jobs:
       #     CI_RUN=true DISPLAY=':99.0' lein run pillars
       - name: Lint
         run: |
-          clojure -Sdeps '{:deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}}' -M -m clj-kondo.main --fail-level error --lint src
+          clojure -Sdeps '{:deps {clj-kondo/clj-kondo {:mvn/version "2023.01.20"}}}' -M -m clj-kondo.main --fail-level error --lint src
 
       - name: Run tests
         run: |

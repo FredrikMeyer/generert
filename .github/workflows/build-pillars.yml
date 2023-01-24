@@ -34,9 +34,13 @@ jobs:
       # - name: Run sketch
       #   run: |
       #     CI_RUN=true DISPLAY=':99.0' lein run pillars
+      - name: Install clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@afc83dbbf4e7e32e04649e29dbf30668d30e9e3e
+        with:
+          version: '2023.01.16'
       - name: Lint
         run: |
-          clojure -Sdeps '{:deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}}' -M -m clj-kondo.main --fail-level error --lint src
+          clj-kondo --fail-level error --lint src --config '{:output {:pattern "::{{level}} file={{filename}},line={{row}},col={{col}}::{{message}}"}}'
 
       - name: Run tests
         run: |

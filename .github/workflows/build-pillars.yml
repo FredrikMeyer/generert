@@ -40,7 +40,7 @@ jobs:
           version: '2023.01.16'
       - name: Lint
         run: |
-          clj-kondo.main --fail-level error --lint src --config '{:output {:pattern "::{{level}} file={{filename}},line={{row}},col={{col}}::{{message}}"}}'
+          clj-kondo --fail-level error --lint src --config '{:output {:pattern "::{{level}} file={{filename}},line={{row}},col={{col}}::{{message}}"}}'
 
       - name: Run tests
         run: |

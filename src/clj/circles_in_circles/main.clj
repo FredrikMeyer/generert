@@ -84,7 +84,7 @@
     (q/redraw))
   old-state)
 
-(q/defsketch example
+(q/defsketch #_:clj-kondo/ignore example
   :title "Oh so many grey circles"
   :settings #(q/smooth 8)
   :features [:keep-on-top]

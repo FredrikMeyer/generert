@@ -3,8 +3,8 @@
             [quil.middleware :as m]
             [tools.drawing :as tools]))
 
-(def w 300)
-(def h 300)
+(def w 600)
+(def h 600)
 
 (def delta 5)
 (def r 1)

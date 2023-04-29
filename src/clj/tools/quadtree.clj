@@ -8,7 +8,10 @@
             [clojure.data.priority-map :as pm]
             [clj-async-profiler.core :as prof]))
 
-(def ^:dynamic *tree-capacity* 3)
+(def ^:dynamic *tree-capacity*
+  "Defines the tree capacity. This is the capacity of each node in the tree."
+  3)
+
 ;; Quadtree
 ;; bounds region
 ;; can contain children
@@ -74,7 +77,13 @@
           (= corner ::lr) (-> ul-scaled
                               (translate-region [new-width (- new-height)])))))
 
-(defn inside-region? [region point]
+(s/fdef inside-region?
+  :args (s/cat :region ::region :point :tools.points/point)
+  :ret boolean?)
+
+(defn inside-region?
+  "Return true if point is inside region."
+  [region point]
   (let [[a b] (::top-left region)
         w (::width region)
         h (::height region)
@@ -112,7 +121,13 @@
         subtrees-with-corners (map (fn [c] {::corner c ::tree (c tree)}) corners)]
     (filter (fn [t] (some? (::tree t))) subtrees-with-corners)))
 
-(defn insert [tree pt]
+(s/fdef insert
+  :args (s/cat :tree ::tree :pt :tools.points/point)
+  :ret ::tree)
+
+(defn insert
+  "Insert pt in tree."
+  [tree pt]
   (loop [tree tree
          key-list []]
     (let [curr-node (get-in tree key-list)]
@@ -159,7 +174,10 @@
         [[p q] [r s]] (region->range region)]
     (and (< a q) (> b p) (< c s) (> d r))))
 
-(defn inside-range? [range pt]
+(defn inside-range?
+  "Return true if pt is inside range. range is a list of two tuples defining
+  the bounding intervals."
+  [range pt]
   (let [[[a b] [c d]] range
         [x y] pt]
     (and (> x a) (< x b) (> y c) (< y d))))
@@ -242,10 +260,10 @@
     [::down ::lr] (if neigbour ::ur nil)
     :else nil))
 
-(def dir->regions {::up [::ul ::ur]
-                   ::left [::ul ::ll]
-                   ::down [::ll ::lr]
-                   ::right [::ur ::lr]})
+(def ^:private dir->regions {::up [::ul ::ur]
+                             ::left [::ul ::ll]
+                             ::down [::ll ::lr]
+                             ::right [::ur ::lr]})
 
 (defn- neigbouring-regions-greater-or-equal-size
   "
@@ -330,6 +348,10 @@
     (> x b) (- x b)
     :else 0))
 
+(s/fdef distance-to-region
+  :args (s/cat :region ::region :pt :tools.points/point)
+  :ret (s/and number? (comp not neg?)))
+
 (defn distance-to-region
   "Computes the taxi-cab metric distance from pt to region. That is, the maximum distance
   of pt in x-direction and y-direction."
@@ -345,8 +367,12 @@
       (max x-dist y-dist))))
 
 (defn- create-region-queue [tree pt]
-  (pm/priority-map-keyfn
-   (fn [t] (distance-to-region (::region t) pt)) [] tree))
+  (let [q
+        (pm/priority-map-keyfn
+         (fn [t]
+           (distance-to-region (::region t) pt)) [] tree)]
+
+    q))
 
 (defn- create-sorted-points [pt]
   (sorted-set-by (fn [p1 p2]
@@ -355,6 +381,10 @@
                      (if (= dist-diff 0)
                        (compare p1 p2)
                        (if (< dist-diff 0) -1 1))))))
+
+(s/fdef closest-point-2
+  :args (s/cat :tree ::tree :point :tools.points/point)
+  :ret :tools.points/point)
 
 (defn closest-point-2
   "Find closest point in tree given pt.
@@ -373,14 +403,13 @@
             distance-best-region (distance-to-region (::region current-node) pt)]
         (if (or
              (empty? region-queue)
-             (< (if (nil? distance-best-point) 0 distance-best-point) distance-best-region)
-             )
+             (< (if (nil? distance-best-point) 0 distance-best-point) distance-best-region))
           (first points-so-far)
           (let [popped-queue (pop region-queue)
                 subtrees (tree-subtrees current-node)
-                new-queue  (into popped-queue (map (fn [t] [(conj current-key (::corner t)) (::tree t)]) subtrees))
-                
-                ]
+                new-queue (into popped-queue
+                                (map (fn [t] [(conj current-key (::corner t)) (::tree t)]) subtrees))]
+            (println new-queue)
             (recur new-queue new-points)))))))
 
 ;; ide: bruke denne til å returnere funksjon slik at man traverse fra nearest til farest
@@ -410,6 +439,10 @@
     "done")
 
   (stest/check `region-center)
-;;; dbg ^{:break/when (> (count (:points curr-tree)) 9)}
 
-)
+  (stest/check `inside-region?)
+
+  (stest/check `insert)
+  (stest/check `distance-to-region)
+;;; dbg ^{:break/when (> (count (:points curr-tree)) 9)}
+  )

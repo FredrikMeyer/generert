@@ -390,7 +390,13 @@
   "Find closest point in tree given pt.
 
   Algorithm: recursively sort subregions by distance to point, in a depth-first way. Collect point until either a point
-  with distance zero is found, or there is no more subregions."
+  with distance zero is found, or there is no more subregions.
+
+  Problemet: reproduser f.eks slik
+  (closest-point-2 (insert (random-tree 10) [0.5 0.5]) [0.501 0.501])
+
+  
+  "
   [tree pt]
   (loop [region-queue (create-region-queue tree pt)
          points-so-far (create-sorted-points pt)]
@@ -401,22 +407,36 @@
             best-point (first new-points)
             distance-best-point (if-let [best-point best-point] (p/distance-sq pt best-point) nil)
             distance-best-region (distance-to-region (::region current-node) pt)]
-        (if (or
+        (if (and false
              (empty? region-queue)
-             (< (if (nil? distance-best-point) 0 distance-best-point) distance-best-region))
-          (first points-so-far)
+             (< (if (nil? distance-best-point) 0 distance-best-point)
+                distance-best-region))
+          (do
+            #_(println "exited here" "pts" points-so-far "queue is empty" (empty? region-queue) "dist best point" distance-best-point "dist best region" distance-best-region "curr-key" current-key "size q" (count region-queue) region-queue)
+            best-point)
           (let [popped-queue (pop region-queue)
                 subtrees (tree-subtrees current-node)
                 new-queue (into popped-queue
                                 (map (fn [t] [(conj current-key (::corner t)) (::tree t)]) subtrees))]
-            (println new-queue)
+            #_(println new-queue)
+            (comment 
+              (println current-key current-node)
+              (println "dist best region" distance-best-region)
+              (println "pts so far" points-so-far)
+              (println "..."))
             (recur new-queue new-points)))))))
 
 ;; ide: bruke denne til å returnere funksjon slik at man traverse fra nearest til farest
 (defn tree->seq [tree]
   (tree-seq map? (fn [n] (filter some? [(::ul n) (::ur n) (::ll n) (::lr n)])) tree))
 
-(defn random-tree [n]
+(s/fdef random-tree
+  :args (s/cat :n nat-int?)
+  :ret ::tree)
+
+(defn random-tree
+  "Generate a random tree with n points."
+  [n]
   (let [pts (r/random-pts n [0.0 1] [0.0 1])]
     (reduce (fn [acc curr] (insert acc curr)) empty-tree pts)))
 

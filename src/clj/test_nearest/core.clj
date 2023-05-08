@@ -32,10 +32,10 @@
   ;; for each point, draw line to nearest neigbours
 
   ;; need to iterate through tree
-  (binding [quad/*tree-capacity* 1]
+  (binding [quad/*tree-capacity* 10]
     (let [t
-          (let [pts (for [x (range 0 1 0.05)
-                          y (range 0 1 0.05)]
+          (let [pts (for [x (range 0 1 0.03)
+                          y (range 0 1 0.03)]
                       [x y])]
             (-> quad/empty-tree
                 (quad/insert-many pts)))]

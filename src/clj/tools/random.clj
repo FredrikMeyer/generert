@@ -1,4 +1,7 @@
-(ns tools.random)
+(ns tools.random
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as st]
+            [clojure.spec.gen.alpha :as gen]))
 
 (defn random
   ([]
@@ -8,8 +11,14 @@
   ([min max]
    (+ min (random (- max min)))))
 
+(s/def ::interval (s/and (s/coll-of number? :count 2) (fn [[a b]] (< a b))))
+
+(s/fdef random-pt
+  :args (s/coll-of ::interval :count 2)
+  :ret :tools.points/point)
+
 (defn random-pt
-  "Generate a random point inside the square bunded by [x0, x1] and [y0, y1]."
+  "Generate a random point inside the square bounded by [x0, x1] and [y0, y1]."
   [[x0 x1] [y0 y1]]
   [(random x0 x1)
    (random y0 y1)])
@@ -19,3 +28,6 @@
   [n [x0 x1] [y0 y1]]
 
   (for [_ (range n)] (random-pt [x0 x1] [y0 y1])))
+
+(comment
+  (st/check `random-pt))

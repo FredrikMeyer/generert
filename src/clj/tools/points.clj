@@ -45,3 +45,10 @@
         [u v] (add-pts [a b] neg)
         l2 (+ (* u u) (* v v))]
     l2))
+
+(s/fdef neg
+  :args (s/cat :p ::point)
+  :ret ::point)
+
+(defn neq [pt]
+  (mult -1 pt))

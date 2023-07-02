@@ -56,3 +56,10 @@
 (comment
   (st/check `distance-sq)
   )
+
+(s/fdef neg
+  :args (s/cat :p ::point)
+  :ret ::point)
+
+(defn neq [pt]
+  (mult -1 pt))

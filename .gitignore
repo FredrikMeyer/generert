@@ -6,3 +6,5 @@ target/
 .lein-failures
 
 images/
+/.clj-kondo
+/.lsp

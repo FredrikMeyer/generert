@@ -10,4 +10,4 @@
                  [com.clojure-goes-fast/clj-async-profiler "1.0.3"]
                  [org.clojure/core.match "1.0.0"]
                  [org.clojure/test.check "1.1.1"]
-                 [quil "3.1.0"]])
+                 [quil "4.3-SNAPSHOT"]])

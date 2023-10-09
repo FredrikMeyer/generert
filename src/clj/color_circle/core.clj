@@ -48,14 +48,15 @@
       (assoc :saturation (:x event))
       (assoc :brightness (:y event))))
 
-(q/defsketch #_:clj-kondo/ignore color-circle
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-moved mouse-moved
-  :mouse-clicked (t/save-on-click-handler "color-circle")
-  :key-pressed t/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore color-circle
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-moved mouse-moved
+    :mouse-clicked (t/save-on-click-handler "color-circle")
+    :key-pressed t/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

@@ -2,7 +2,6 @@
 
 See [generert.art](https://www.generert.art/).
 
-
 Run locally:
 
 ```

@@ -1,6 +1,5 @@
 (ns attempt.dynamic
-  (:require [quil.core :as q]
-            [tools.lines :as t]))
+  (:require [quil.core :as q]))
 
 (def w 900)
 (def h 900)

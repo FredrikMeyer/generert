@@ -14,5 +14,5 @@
 (defn redraw [old-state event]
   (when (= (:key event) :r)
     (q/redraw)
-    (print "Redrawed."))
+    (println "Redrawed."))
   old-state)

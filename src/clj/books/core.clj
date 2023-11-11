@@ -137,7 +137,7 @@
 (defn update-state [state]
   state)
 
-(defn draw-state [state]
+(defn draw-state [_]
   (q/background 0)
   (draw)
   ;; (time (draw))

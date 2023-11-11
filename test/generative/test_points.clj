@@ -1,5 +1,6 @@
 (ns generative.test-points
-  [:require [clojure.test :refer :all]
+  [:require
+   [clojure.test :refer :all]
    [tools.points :as pts]])
 
 (deftest point-on-line

@@ -31,6 +31,11 @@
   (let [negy (mult -1 y)]
     (add-pts  x negy)))
 
+(defn middle-pt [x y]
+  (let [diff (diff-pts y x)
+        halfed (mult 0.5 diff)]
+    (add-pts x halfed)))
+
 (s/fdef normalize
   :args (s/cat :p ::point)
   :ret ::point)

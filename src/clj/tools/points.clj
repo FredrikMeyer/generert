@@ -11,6 +11,8 @@
   :ret ::point)
 
 (defn add-pts [y x]
+  {:pre [(seqable? y)
+         (seqable? x)]}
   (let [[p1 p2] y
         [q1 q2] x]
     [(+ p1 q1) (+ p2 q2)]))
@@ -20,6 +22,8 @@
   :ret ::point)
 
 (defn mult [c [a b]]
+  {:pre [(number? c)]
+   }
   [(* c a) (* c b)])
 
 
@@ -57,3 +61,6 @@
 
 (defn neq [pt]
   (mult -1 pt))
+
+(comment
+  (st/instrument `add-pts))

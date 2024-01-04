@@ -145,14 +145,14 @@
   ;; (q/no-loop)
   )
 
-
-(q/defsketch #_:clj-kondo/ignore books
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-clicked (d/save-on-click-handler "books")
-  :key-pressed d/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+(defn run []
+  (q/defsketch #_:clj-kondo/ignore books
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-clicked (d/save-on-click-handler "books")
+    :key-pressed d/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

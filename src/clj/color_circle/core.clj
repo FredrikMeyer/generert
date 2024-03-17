@@ -48,6 +48,7 @@
       (assoc :saturation (:x event))
       (assoc :brightness (:y event))))
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sketch []
   (q/defsketch #_:clj-kondo/ignore color-circle
     :title "You spin my circle right round"

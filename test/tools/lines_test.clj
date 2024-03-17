@@ -1,4 +1,4 @@
-(ns generative.test-too
+(ns tools.lines-test
   (:require [clojure.test :refer :all]
             [tools.lines :as t]))
 

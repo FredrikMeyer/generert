@@ -93,13 +93,15 @@
   (println "Done")
   (q/no-loop))
 
-(q/defsketch #_:clj-kondo/ignore chaikin
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-clicked (d/save-on-click-handler "chaikin")
-  :key-pressed d/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore chaikin
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-clicked (d/save-on-click-handler "chaikin")
+    :key-pressed d/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

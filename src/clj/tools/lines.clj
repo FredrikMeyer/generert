@@ -1,5 +1,6 @@
 (ns tools.lines
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [tools.points]))
 
 (s/fdef point-on-line
   :args (s/cat :p1 :tools.points/point :p2 :tools.points/point

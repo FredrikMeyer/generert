@@ -68,16 +68,15 @@
 ;  (q/no-loop)
   )
 
-(q/defsketch #_:clj-kondo/ignore concentric
-  :title "You spin my circle right round"
-  :size [@w @h]
-  :setup setup
-  :update update-state
-  :mouse-clicked (t/save-on-click-handler "concentric")
-  :key-pressed t/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error :resizable]
-  :middleware [m/fun-mode m/pause-on-error])
-
-
-t/save-on-click-handler
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore concentric
+    :title "You spin my circle right round"
+    :size [@w @h]
+    :setup setup
+    :update update-state
+    :mouse-clicked (t/save-on-click-handler "concentric")
+    :key-pressed t/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error :resizable]
+    :middleware [m/fun-mode m/pause-on-error]))

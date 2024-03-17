@@ -145,7 +145,8 @@
   ;; (q/no-loop)
   )
 
-(defn run []
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
   (q/defsketch #_:clj-kondo/ignore books
     :title "You spin my circle right round"
     :size [w h]

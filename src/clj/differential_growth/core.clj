@@ -6,13 +6,13 @@
             [tools.random :as r]
             [clj-async-profiler.core :as prof]))
 
-(def w 900)
-(def h 900)
+(def w 800)
+(def h 800)
 
 (def cx (/ w 2))
 (def cy (/ h 2))
 
-(def insert-distance 15)
+(def insert-distance 20)
 (def repulsion-distance (* 1 insert-distance))
 (def ^{:doc "Spring constant"} k 5)
 
@@ -25,6 +25,7 @@
   (->Particle pos [0 0] (str (rand))))
 
 (def init-particles
+  "Inserts 14 particles in a circle around the origin."
   (for [n (range 14)]
     (let [angle (* 2 q/PI (/ n 30))
           radius 50
@@ -50,8 +51,9 @@
     (new-particle middle-pos)))
 
 (defn iterate-and-insert-particles [particles]
-  (let [particle-pairs (partition 2 1 (concat particles [(first particles)]))
-        insert-threshold insert-distance]
+  (let [particle-pairs (->> [(first particles)]
+                            (concat particles)
+                            (partition 2 1))]
     (loop [acc (transient [])
            rest-p particle-pairs]
       (if (empty? rest-p)
@@ -59,8 +61,8 @@
         (let [[p1 p2] (first rest-p)
               dist-sq (dist-particles p1 p2)]
           (recur
-           (if (> dist-sq (Math/pow insert-threshold 2))
-             (-> acc (conj! p1) (conj! (middle-particle p1 p2)))
+           (if (> dist-sq (Math/pow insert-distance 2))
+             (conj! (conj! acc p1) (middle-particle p1 p2))
              (conj! acc p1))
            (rest rest-p)))))))
 
@@ -132,6 +134,7 @@
   ;; (q/no-loop)
   )
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sketch []
   (q/defsketch #_:clj-kondo/ignore texture
     :title "You spin my circle right round"

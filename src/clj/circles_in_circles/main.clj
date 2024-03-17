@@ -2,7 +2,6 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-
 (def w 1000)
 (def h 1000)
 
@@ -11,12 +10,9 @@
   (q/color-mode :hsb 100 100 100 100)
   (q/stroke 100 50)
   (q/no-fill)
-  {
-   :point [600 600]
+  {:point [600 600]
    :alpha 50
-   :angle 0
-   })
-
+   :angle 0})
 
 (defn line-to-point [pnt1 pnt]
   (q/line pnt1 pnt))
@@ -27,16 +23,14 @@
           y (+ b (* r (Math/sin theta)))]
       ;; (line-to-point [x y] p)
       (q/fill 0)
-      (q/ellipse x y 10 10)
-      )))
+      (q/ellipse x y 10 10))))
 
 (defn dist-to-center [x y]
   (let [dx (- x (/ w 2))
-          dy (- y (/ h 2))
-          dx2 (* dx dx)
-          dy2 (* dy dy)]
-      (+ dx2 dy2)
-      ))
+        dy (- y (/ h 2))
+        dx2 (* dx dx)
+        dy2 (* dy dy)]
+    (+ dx2 dy2)))
 
 (defn draw [state]
   (q/stroke 100 35)
@@ -60,18 +54,13 @@
               (doseq [k (range 2 40 0.2)]
                 (let [inner-radius (/ c-w (+ k 0.5))
                       diam (* inner-radius 2)]
-                  (q/ellipse (- (* 1 (/ c-w 2)) inner-radius) 0 diam diam))
-                )))))
-      )
-    )
-  ;; (q/start-loop)
-  (q/no-loop)
-  )
+                  (q/ellipse (- (* 1 (/ c-w 2)) inner-radius) 0 diam diam)))))))))
+
+;; (q/start-loop)
+  (q/no-loop))
 
 (defn update-state [state]
-  state
-  )
-
+  state)
 
 (defn save-on-click [state _]
   (println "Saved")
@@ -84,14 +73,16 @@
     (q/redraw))
   old-state)
 
-(q/defsketch #_:clj-kondo/ignore example
-  :title "Oh so many grey circles"
-  :settings #(q/smooth 8)
-  :features [:keep-on-top]
-  :setup setup
-  :draw draw
-  :mouse-clicked save-on-click
-  :key-pressed redraw
-  :update update-state
-  :middleware [m/fun-mode]
-  :size [w h])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore example
+    :title "Oh so many grey circles"
+    :settings #(q/smooth 8)
+    :features [:keep-on-top]
+    :setup setup
+    :draw draw
+    :mouse-clicked save-on-click
+    :key-pressed redraw
+    :update update-state
+    :middleware [m/fun-mode]
+    :size [w h]))

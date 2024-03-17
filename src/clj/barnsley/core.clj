@@ -60,19 +60,15 @@
   (println "Done")
   (q/no-loop))
 
-(defn save-on-click [state _]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "barnsley" (hash state) "_" (q/random 0 1) " .png"))
-  state)
-
-(q/defsketch #_:clj-kondo/ignore barnsley
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-clicked (d/save-on-click-handler "barnsley")
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore barnsley
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-clicked (d/save-on-click-handler "barnsley")
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))
 

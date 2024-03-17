@@ -149,13 +149,15 @@
 
   )
 
-(q/defsketch #_:clj-kondo/ignore marching-squares
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-clicked  (tools/save-on-click-handler "marching_squares")
-  :key-pressed tools/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore marching-squares
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-clicked  (tools/save-on-click-handler "marching_squares")
+    :key-pressed tools/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

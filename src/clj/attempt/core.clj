@@ -12,13 +12,15 @@
 ;;   (use :reload 'attempt.dynamic)
 ;;   (.loop attempt))
 
-(q/defsketch #_:clj-kondo/ignore attempt
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup dyn/setup
-  :update dyn/update-state
-  :mouse-clicked (td/save-on-click-handler "attempt")
-  :key-pressed td/redraw
-  :draw dyn/draw-state
-  :features [:no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore attempt
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup dyn/setup
+    :update dyn/update-state
+    :mouse-clicked (td/save-on-click-handler "attempt")
+    :key-pressed td/redraw
+    :draw dyn/draw-state
+    :features [:no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

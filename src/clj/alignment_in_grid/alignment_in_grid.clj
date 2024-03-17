@@ -37,7 +37,6 @@
       (if (= toggle 0)
         (do
           ;; (q/stroke-weight (* 5 (q/noise (/ (* posX posY) 500))))
-          ()
           ;; (q/stroke-weight 15)
           (q/stroke-weight (normalized-distance posX posY))
           (q/stroke (get-color))
@@ -56,27 +55,23 @@
   ;; (println "Done")
   (q/no-loop))
 
-(defn save-on-click [state _]
-  (println "Saved")
-  (println state)
-  (q/save-frame (str "alignment_in_grid" (hash state) "_" (q/random 0 1) ".jpg"))
-  state)
-
 (defn mouse-moved [state event]
   (-> state
       (assoc :saturation (:x event))
       (assoc :brightness (:y event))))
 
-(q/defsketch #_:clj-kondo/ignore pixels
-  :title "You spin my circle right round"
-  :size [w h]
-  :setup setup
-  :update update-state
-  :mouse-moved mouse-moved
-  :mouse-clicked (dr/save-on-click-handler "pixels")
-  :key-pressed dr/redraw
-  :draw draw-state
-  :features [:keep-on-top :no-bind-output :pause-on-error]
-  :middleware [m/fun-mode m/pause-on-error])
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore pixels
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-moved mouse-moved
+    :mouse-clicked (dr/save-on-click-handler "alignment_in_grid")
+    :key-pressed dr/redraw
+    :draw draw-state
+    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))
 
 

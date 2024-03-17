@@ -10,7 +10,7 @@
               {io.github.borkdude/lein2deps
                {:git/sha "1fdaf45577edc9a6aeee027501e50924b9b793f5"}},
               :ns-default lein2deps.build}
-  :test/env {:extra-paths [test]}
+  :test/env {:extra-paths ["test"]}
   :test {:extra-paths ["test"]
          :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
          :main-opts   ["--main" "kaocha.runner"]

@@ -10,7 +10,13 @@
               {io.github.borkdude/lein2deps
                {:git/sha "1fdaf45577edc9a6aeee027501e50924b9b793f5"}},
               :ns-default lein2deps.build}
-  :test {:extra-paths ["test"]}
+  :test/env {:extra-paths [test]}
+  :test {:extra-paths ["test"]
+         :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
+         :main-opts   ["--main" "kaocha.runner"]
+         :exec-fn kaocha.runner/exec-fn
+         :exec-args {:randomize? false
+                     :fail-fast? true}}
   :outdated {;; Note that it is `:deps`, not `:extra-deps`
              :deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
              :main-opts ["-m" "antq.core"]}}}

@@ -1,1 +1,1 @@
-((clojure-mode . ((cider-clojure-cli-aliases . ":test"))))
+((clojure-mode . ((cider-clojure-cli-aliases . ":test/env"))))

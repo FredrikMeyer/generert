@@ -24,7 +24,7 @@
          (>= y ymin)
          (<= y ymax)))
   (intersects-shape [_ s]
-    #break (cond (instance? Rectangle s)
+    (cond (instance? Rectangle s)
                  (not (or (> xmin (:xmin s))
                           (> ymin (:ymin s))
                           (< xmax (:xmax s))
@@ -102,7 +102,7 @@
   (value [_]
     (:value root))
   (intersect-rect [this other-rect]
-    #dbg (if (nil? root) #{}
+    (if (nil? root) #{}
              (loop [points #{}
                     paths [[]]]
                (if (empty? paths)

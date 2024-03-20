@@ -1,10 +1,11 @@
-(ns circle_pack.core
+(ns circle-pack.core
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as d]
             [tools.random :as r]
             [tools.points :as p]
             [tools.lines :as gtl]
+            [tools.2dtree :as twod]
             ;; [kdtree :as kd]
             ))
 
@@ -13,7 +14,7 @@
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
-  (q/stroke 100 50)
+  (q/stroke 100 100)
   (q/ellipse-mode :radius)
   (q/rect-mode :radius)
   {})
@@ -159,7 +160,7 @@
         circles))))
 
 (defn draw-circle [^Circle circle]
-  (doseq [r (range 1 (:radius circle) 3)]
+  (doseq [r (range 0 (inc (:radius circle)) 3)]
     (let [[x y] (:center circle)]
       (q/ellipse x y r r))))
 
@@ -168,48 +169,120 @@
         r (:radius circle)]
     (q/ellipse x y r r)))
 
-(defn draw []
-  (q/stroke 100)
-  ;; (q/no-stroke)
-  (q/no-fill)
-  ;; (q/fill 100 50)
+(defn gen-circles [max-tries]
+  (loop [tree (conj (twod/two-tree)
+                    (with-meta [(/ 450. w) (/ 450. h)] {:r 10}))
+         circles #{}
+         n 0]
 
-  (doseq [c (compute-packing 1000 20000)]
-    (draw-circle-2 c))
-  -
-;;; old
-  (comment
-    (q/ellipse (/ w 2) (/ h 2) 800 800)
+    (if (< n max-tries)
+      (let [[x y] (r/random-pt [0 w] [0 h])
+            nearby-points (twod/intersect-rect tree (twod/->Rectangle (/ (- x 40) w) (/ (- y 40) h) (/ (+ x 40) w) (/ (+ y 40) h)))
+            nearby-circles (map (fn [p] (->Circle (p/mult w p) (:r (meta p)))) nearby-points)
+            closest-new-circle (closest-circle nearby-circles [x y])
+;;            neigbour (p/mult w (twod/nearest tree [(/ x w) (/ y h)]))
+;;            neighbour-r (:r (meta neigbour))
+;;            dist (Math/sqrt (p/distance-sq neigbour [(/ x 1) (/ y 1)]))
+            ;;r (Math/abs (- dist neighbour-r))
+            ]
 
-    (loop [tree (kd/build-tree
-                 [(with-meta [450 450] {:r 10})])
-           n 0]
-      ;; (println tree)
-      (when (< n 10000)
-        (let [[x y] (r/random-pt [0 w] [0 h])
-              neigbour (kd/nearest-neighbor tree [x y])
-              neighbour-r (:r (meta neigbour))
-              dist (Math/sqrt (:dist-squared neigbour))
-              r 10 ;; (r/random 2 dist)
-              ]
-          ;; (println neigbour dist r neighbour-r)
-          ;; (println "fff" (- dist neighbour-r r))
-          (if (and neigbour
-                   (> (- dist neighbour-r r) 0)
-                   (< (+ r (Math/sqrt (p/distance-sq [x y] [450 450])))
+        (cond (and (:circle closest-new-circle) (> (:dist closest-new-circle) 0)
+                   (< (+ 0 (Math/sqrt (p/distance-sq [x y] [450 450])))
                       (+ (* 1 400))))
-            (do
-              (q/ellipse x y r r)
-              (recur (kd/insert tree (with-meta [x y] {:r r}))
-                     (inc n)))
-            (recur tree
-                   (inc n))))))))
+              (let [dist-to-circle (:dist closest-new-circle)
+                    new-r (min 20 (Math/abs dist-to-circle))
+                    c (:circle closest-new-circle)
+                    [c1 c2] (:center c)]
+
+                #_(q/line x y c1 c2)
+                (recur (conj tree (with-meta [(/ x w) (/ y h)] {:r new-r}))
+                       (conj circles (with-meta (->Circle [x y] new-r) {:p [c1 c2]}))
+                       (inc n)))
+              :else
+              (recur tree circles (inc n))))
+
+      (do
+        (println "Done iterating")
+        circles))))
+
+(defn draw []
+
+  (q/stroke 100 100)
+  ;; (q/no-stroke)
+  (q/fill 100 30)
+
+  (println (q/current-stroke))
+  (comment
+    (doseq [c (compute-packing 10000 20000)]
+      (draw-circle-2 c)))
+
+ ;;; old
+
+  (let [res (gen-circles 25000)]
+    (doseq [c res]
+      (let [[x y] (:p (meta c))
+            [a b] (:center c)]
+        ;; Draw either tree or circles
+        (q/line x y a b)
+        #_(draw-circle c))))
+
+
+
+  
+  (comment
+
+    (loop [tree (conj (twod/two-tree)
+                      (with-meta [(/ 450. w) (/ 450. h)] {:r 10}))
+           n 0]
+
+      (if (< n 20000)
+        (let [[x y] (r/random-pt [0 w] [0 h])
+              nearby-points (twod/intersect-rect tree (twod/->Rectangle (/ (- x 40) w) (/ (- y 40) h) (/ (+ x 40) w) (/ (+ y 40) h)))
+              nearby-circles (map (fn [p] (->Circle (p/mult w p) (:r (meta p)))) nearby-points)
+              closest-new-circle (closest-circle nearby-circles [x y])
+              neigbour (p/mult w (twod/nearest tree [(/ x w) (/ y h)]))
+              neighbour-r (:r (meta neigbour))
+              dist (Math/sqrt (p/distance-sq neigbour [(/ x 1) (/ y 1)]))
+              r (Math/abs (- dist neighbour-r))]
+
+          (comment (if (and neigbour
+                            (> (- 100000 dist neighbour-r r) 0)
+                            (< (+ r (Math/sqrt (p/distance-sq [x y] [450 450])))
+                               (+ (* 1 400))))
+                     (do
+            ;; (q/line x y (first neigbour) (second neigbour))
+            ;(q/ellipse x y r r)
+                       (recur (conj tree (with-meta [(/ x w) (/ y h)] {:r 10}))
+                              (inc n)))
+                     (recur tree
+                            (inc n))))
+
+          (cond (and (:circle closest-new-circle) (> (:dist closest-new-circle) 0)
+                     (< (+ r (Math/sqrt (p/distance-sq [x y] [450 450])))
+                        (+ (* 1 400))))
+                (let [dist-to-circle (:dist closest-new-circle)
+                      new-r (min 20 (Math/abs dist-to-circle))
+                      c (:circle closest-new-circle)
+                      [c1 c2] (:center c)]
+                ;; (q/ellipse x y new-r new-r)
+                  (draw-circle c)
+
+                  #_(q/line x y c1 c2)
+                  (recur (conj tree (with-meta [(/ x w) (/ y h)] {:r new-r}))
+                         (inc n)))
+                :else
+                (recur tree (inc n))))
+
+        (println "Done iterating"))))
+  (println "done"))
 
 (defn update-state [state]
   state)
 
 (defn draw-state [_]
   (q/background 0)
+  #_(q/with-fill [0 100]
+    (q/rect 0 0 w h))
   (time (draw))
   (println "Done")
   (q/no-loop))
@@ -221,8 +294,10 @@
     :size [w h]
     :setup setup
     :update update-state
-    :mouse-clicked (d/save-on-click-handler "chaikin")
+    :mouse-clicked (d/save-on-click-handler "circle-pack")
     :key-pressed d/redraw
     :draw draw-state
     :features [:keep-on-top :no-bind-output :pause-on-error]
     :middleware [m/fun-mode m/pause-on-error]))
+
+

@@ -1,6 +1,7 @@
 (ns tools.random
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as st]
+            [tools.points]
             [clojure.spec.gen.alpha :as gen]))
 
 (defn random
@@ -25,9 +26,10 @@
 
 (defn random-pts
   "Generates n random points bounded by [x0, x1] and [y0, y1]. See [[random-pt]]."
-  [n [x0 x1] [y0 y1]]
-
-  (for [_ (range n)] (random-pt [x0 x1] [y0 y1])))
+  ([n [x0 x1] [y0 y1]]
+   (for [_ (range n)] (random-pt [x0 x1] [y0 y1])))
+  ([n]
+   (random-pts n [0 1] [0 1])))
 
 (comment
   (st/check `random-pt))

@@ -10,4 +10,11 @@
       (is (= res [3 4])))))
 
 (deftest mult-test
-  (is (= (pts/mult 2 [3 4]) [6 8])))
+  (is (= (pts/mult 2 [3 4]) [6 8]))
+  (testing "keeps metadata of point"
+    (is (= {:a 2} (meta (pts/mult 2 (with-meta [1 2] {:a 2})))))))
+
+(deftest normalize
+  (is (= [1. 0.] (pts/normalize [2 0])))
+  (testing "keeps metadata of point"
+    (is (= {:a 2} (meta (pts/normalize (with-meta [2 0] {:a 2})))))))

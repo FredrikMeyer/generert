@@ -8,7 +8,7 @@
     (println "Saved")
     (println state)
     (println name)
-    (q/save-frame (str "images/" name "/" (hash state) "_" (q/random 0 1) ".tif"))
+    (q/save-frame (str "images/" name "/" (abs (hash state)) "_" (q/random 0 1) ".tif"))
     state))
 
 (defn redraw [old-state event]

@@ -21,10 +21,10 @@
   :args ::args-mult
   :ret ::point)
 
-(defn mult [c [a b]]
-  {:pre [(number? c)]
-   }
-  [(* c a) (* c b)])
+(defn mult [c [a b :as p]]
+  {:pre [(number? c)]}
+  (with-meta
+    [(* c a) (* c b)] (meta p)))
 
 
 (s/fdef diff-pts
@@ -44,10 +44,10 @@
   :args (s/cat :p ::point)
   :ret ::point)
 
-(defn normalize [[a b]]
+(defn normalize [[a b :as p]]
   (let [l2 (+ (* a a) (* b b))
         l (Math/sqrt l2)]
-    [(/ a l) (/ b l)]))
+    (with-meta [(/ a l) (/ b l)] (meta p))))
 
 (defn distance-sq [[a b] [x y]]
   (let [neg (mult -1 [x y])

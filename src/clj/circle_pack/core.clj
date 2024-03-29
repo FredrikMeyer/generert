@@ -142,8 +142,7 @@
   (loop [n 0
          circles [;; (Circle. [(/ w 2) (/ h 2)] 50)
                   (Circle. [450 450] -400)
-                  (Circle. [(/ w 4) (/ h 4)] 0)
-                  ;; (Circle. [(/ (* 3 w) 4) (/ (* 3 h) 4)] 0)
+                  (Circle. [(/ w 4) (/ h 4)] 0)                 
                   ]]
     (if (and (< n max-iterations) (< (count circles) points-goal))
       (let [line (get-random-line)
@@ -218,7 +217,7 @@
 
  ;;; old
 
-  (let [res (gen-circles 25000)]
+  (let [res (gen-circles 5000)]
     (doseq [c res]
       (let [[x y] (:p (meta c))
             [a b] (:center c)]
@@ -235,7 +234,7 @@
                       (with-meta [(/ 450. w) (/ 450. h)] {:r 10}))
            n 0]
 
-      (if (< n 20000)
+      (if (< n 2000)
         (let [[x y] (r/random-pt [0 w] [0 h])
               nearby-points (twod/intersect-rect tree (twod/->Rectangle (/ (- x 40) w) (/ (- y 40) h) (/ (+ x 40) w) (/ (+ y 40) h)))
               nearby-circles (map (fn [p] (->Circle (p/mult w p) (:r (meta p)))) nearby-points)
@@ -289,7 +288,7 @@
 
 #_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sketch []
-  (q/defsketch #_:clj-kondo/ignore circle_pack
+  (q/defsketch #_:clj-kondo/ignore circle-pack
     :title "You spin my circle right round"
     :size [w h]
     :setup setup
@@ -297,7 +296,7 @@
     :mouse-clicked (d/save-on-click-handler "circle-pack")
     :key-pressed d/redraw
     :draw draw-state
-    :features [:keep-on-top :no-bind-output :pause-on-error]
+    :features [:no-bind-output :pause-on-error]
     :middleware [m/fun-mode m/pause-on-error]))
 
 

@@ -217,7 +217,7 @@
 
  ;;; old
 
-  (let [res (gen-circles 5000)]
+  (let [res (gen-circles 10000)]
     (doseq [c res]
       (let [[x y] (:p (meta c))
             [a b] (:center c)]

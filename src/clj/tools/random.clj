@@ -20,9 +20,11 @@
 
 (defn random-pt
   "Generate a random point inside the square bounded by [x0, x1] and [y0, y1]."
-  [[x0 x1] [y0 y1]]
-  [(random x0 x1)
-   (random y0 y1)])
+  ([[x0 x1] [y0 y1]]
+   [(random x0 x1)
+    (random y0 y1)])
+  ([]
+   (random-pt [0 1] [0 1])))
 
 (defn random-pts
   "Generates n random points bounded by [x0, x1] and [y0, y1]. See [[random-pt]]."

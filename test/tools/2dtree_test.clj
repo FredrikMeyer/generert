@@ -121,7 +121,21 @@
     (let [point-sets (gen/sample (points-gen 1000 1000) 100)
           trees (map #(reduce conj (s/two-tree) %) point-sets)]
       (c/bench (doseq [t trees]
-                 (let [p (r/random-pt)] (s/nearest t p))) :verbose)))
-  ;
-  )
+                 (let [p (r/random-pt)] (s/nearest t p))) :verbose))))
 
+;; Faster with pruning nodes
+;;       Execution time sample mean : 3,159886 ms
+;;              Execution time mean : 3,160627 ms
+;; Execution time sample std-deviation : 59,036271 µs
+;;     Execution time std-deviation : 60,071360 µs
+;;    Execution time lower quantile : 3,093218 ms ( 2,5%)
+;;    Execution time upper quantile : 3,250073 ms (97,5%)
+;;                    Overhead used : 1,876335 ns
+;; VS
+;;       Execution time sample mean : 21,898505 ms
+;;              Execution time mean : 21,899043 ms
+;; Execution time sample std-deviation : 203,455780 µs
+;;     Execution time std-deviation : 208,384879 µs
+;;    Execution time lower quantile : 21,638292 ms ( 2,5%)
+;;    Execution time upper quantile : 22,396397 ms (97,5%)
+;;                    Overhead used : 1,876335 ns

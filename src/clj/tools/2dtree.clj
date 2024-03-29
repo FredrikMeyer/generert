@@ -97,6 +97,9 @@
                                                          (left-of prev-rect prev-pt)
                                                          (right-of prev-rect prev-pt)))))))))))
 
+(defn- worth-exploring? [node best-so-far pt]
+  (< (distance-squared node pt) (p/distance-sq pt best-so-far)))
+
 (deftype TwoTree [root]
   I2DTree
   (value [_]
@@ -135,17 +138,20 @@
               ;; Both children exist
               (and lower higher)
               (let [comparator-fn (if vertical first second)
-                    current-compare-res (<= (comparator-fn pt) (comparator-fn value))]
-                (if current-compare-res
-                  ;; Explore closest children first
-                  (recur best-so-far* (conj (pop paths) (conj current-path :higher) (conj current-path :lower)))
-                  (recur best-so-far* (conj (pop paths) (conj current-path :lower) (conj current-path :higher)))))
+                    current-compare-res (<= (comparator-fn pt) (comparator-fn value))
+                    ;; Explore closest node first
+                    child-nodes  (if current-compare-res '(:higher :lower) '(:lower :higher))
+                    v (->> child-nodes
+                           ;; Filter nodes worth exploring
+                           (transduce (comp (filter #(worth-exploring? (:rect (% current-node)) best-so-far* pt))
+                                            (map #(conj current-path %))) conj (pop paths)))]
+                (recur best-so-far* v))
               (some? lower)
-              (if (< (distance-squared (:rect lower) pt) (p/distance-sq pt best-so-far*))
+              (if (worth-exploring? (:rect lower) best-so-far* pt)
                 (recur best-so-far* (conj (pop paths) (conj current-path :lower)))
                 (recur best-so-far* (pop paths)))
               (some? higher)
-              (if (< (distance-squared (:rect higher) pt) (p/distance-sq pt best-so-far*))
+              (if (worth-exploring? (:rect higher) best-so-far* pt)
                 (recur best-so-far* (conj (pop paths) (conj current-path :higher)))
                 (recur best-so-far* (pop paths)))
               :else

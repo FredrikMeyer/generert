@@ -4,6 +4,7 @@
    [clojure.test.check :as tc]
    [clojure.test.check.generators :as gen]
    [clojure.test.check.properties :as prop]
+   [criterium.core :as c]
    [tools.2dtree :as s]
    [tools.points :as p]
    [tools.random :as r]))
@@ -77,15 +78,24 @@
   (is (thrown? Exception (s/left-of (s/->Rectangle 0 0 1 1) [5 5])))
   (is (= (s/->Rectangle 0 0 0.5 1) (s/left-of (s/->Rectangle 0 0 1 1) [0.5 0.5]))))
 
+(defn ^:private points-gen [min-length max-length]
+  (-> {:infinite? false :max 1 :NaN? false :min 0}
+                                 gen/double*
+                                 (gen/vector 2)
+                                 (gen/vector min-length max-length)))
 
-(def prop (prop/for-all [pts (gen/vector (gen/vector (gen/double* {:infinite? false :max 1 :NaN? false :min 0}) 2) 3)]
+
+(def prop (prop/for-all [[p & pts] (points-gen 3 50)]
                         (let [t (reduce conj (s/two-tree) pts)
-                              correct-answer (nearest-by-sort pts [0.5 0.5])]
+                              correct-answer (nearest-by-sort pts p)
+                              correct-dist (p/distance-sq correct-answer p)
+                              tree-answ (s/nearest t p)
+                              tree-dist (p/distance-sq tree-answ p)]
 
-                          (= correct-answer (s/nearest t [0.5 0.5])))))
+                          (= correct-dist tree-dist))))
 
 (deftest nearest-generative
-  (is (= nil (let [res (tc/quick-check 100 prop)]
+  (is (= nil (let [res (tc/quick-check 10000 prop)]
                (when (not (:pass? res))
                  (let [failed (first (:smallest (:shrunk res)))
                        t (reduce conj (s/two-tree) failed)
@@ -98,3 +108,13 @@
                     :tree-dist (p/distance-sq [0.5 0.5] tree-answ)
                     :correct-dist (p/distance-sq [0.5 0.5] answ)
                     :answ answ}))))))
+
+
+
+(comment
+  (with-redefs [c/*sample-count* 10]
+    (let [[p & pts] (gen/sample (points-gen 30 30) 1)
+          t (reduce conj (s/two-tree) pts)]
+      (c/quick-bench (s/nearest t p) :verbose)))
+  ;
+  )

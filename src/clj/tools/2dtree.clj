@@ -25,11 +25,11 @@
          (<= y ymax)))
   (intersects-shape [_ s]
     (cond (instance? Rectangle s)
-                 (not (or (> xmin (:xmin s))
-                          (> ymin (:ymin s))
-                          (< xmax (:xmax s))
-                          (< ymax (:ymax s))))
-                 :else (throw (Exception. "Unsupported intersection"))))
+          (not (or (> xmin (:xmin s))
+                   (> ymin (:ymin s))
+                   (< xmax (:xmax s))
+                   (< ymax (:ymax s))))
+          :else (throw (Exception. "Unsupported intersection"))))
   IDistance
   (distance-squared [this [^double x ^double y :as p]]
     (if (contains-point? this p) 0
@@ -103,20 +103,20 @@
     (:value root))
   (intersect-rect [this other-rect]
     (if (nil? root) #{}
-             (loop [points #{}
-                    paths [[]]]
-               (if (empty? paths)
-                 points
-                 (let [current-path (peek paths)
-                       {:keys [value lower higher vertical rect] :as current-node} (get-in root current-path)]
-                   (recur (if (contains-point? other-rect value) (conj points value) points)
-                          (cond (and lower higher)
-                                (conj (pop paths) (conj current-path :lower) (conj current-path :higher))
-                                (some? lower)
-                                (conj (pop paths) (conj current-path :lower))
-                                (some? higher)
-                                (conj (pop paths) (conj current-path :higher))
-                                :else (pop paths))))))))
+        (loop [points #{}
+               paths [[]]]
+          (if (empty? paths)
+            points
+            (let [current-path (peek paths)
+                  {:keys [value lower higher vertical rect] :as current-node} (get-in root current-path)]
+              (recur (if (contains-point? other-rect value) (conj points value) points)
+                     (cond (and lower higher)
+                           (conj (pop paths) (conj current-path :lower) (conj current-path :higher))
+                           (some? lower)
+                           (conj (pop paths) (conj current-path :lower))
+                           (some? higher)
+                           (conj (pop paths) (conj current-path :higher))
+                           :else (pop paths))))))))
 
   (nearest [this pt]
     (if (nil? root) nil
@@ -126,18 +126,18 @@
                 {:keys [value lower higher vertical] :as current-node} (get-in root current-path)
                 best-so-far* (min-key #(p/distance-sq pt %) value best-so-far)]
             (cond
-                   ;; The stack of paths to be explored is empty, return best-so-far
+              ;; The stack of paths to be explored is empty, return best-so-far
               (nil? current-path)
               best-so-far
-                   ;; If pt = value, then no need to do anything more
+              ;; If pt = value, then no need to do anything more
               (= pt value)
               value
-                   ;; Both children exist
+              ;; Both children exist
               (and lower higher)
               (let [comparator-fn (if vertical first second)
                     current-compare-res (<= (comparator-fn pt) (comparator-fn value))]
                 (if current-compare-res
-                       ;; Explore closest children first
+                  ;; Explore closest children first
                   (recur best-so-far* (conj (pop paths) (conj current-path :higher) (conj current-path :lower)))
                   (recur best-so-far* (conj (pop paths) (conj current-path :lower) (conj current-path :higher)))))
               (some? lower)

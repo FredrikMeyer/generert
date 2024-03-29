@@ -80,10 +80,9 @@
 
 (defn ^:private points-gen [min-length max-length]
   (-> {:infinite? false :max 1 :NaN? false :min 0}
-                                 gen/double*
-                                 (gen/vector 2)
-                                 (gen/vector min-length max-length)))
-
+      gen/double*
+      (gen/vector 2)
+      (gen/vector min-length max-length)))
 
 (def prop (prop/for-all [[p & pts] (points-gen 3 50)]
                         (let [t (reduce conj (s/two-tree) pts)
@@ -109,8 +108,6 @@
                     :correct-dist (p/distance-sq [0.5 0.5] answ)
                     :answ answ}))))))
 
-
-
 (comment
   (with-redefs [c/*sample-count* 10]
     (let [[p & pts] (gen/sample (points-gen 30 30) 1)
@@ -118,3 +115,13 @@
       (c/quick-bench (s/nearest t p) :verbose)))
   ;
   )
+
+(comment
+  (with-redefs [c/*sample-count* 60]
+    (let [point-sets (gen/sample (points-gen 1000 1000) 100)
+          trees (map #(reduce conj (s/two-tree) %) point-sets)]
+      (c/bench (doseq [t trees]
+                 (let [p (r/random-pt)] (s/nearest t p))) :verbose)))
+  ;
+  )
+

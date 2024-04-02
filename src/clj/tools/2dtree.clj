@@ -12,12 +12,14 @@
 (defprotocol IDistance
   (distance-squared [this p]))
 
-(defprotocol IIntersectAble
+(defprotocol IIntersectable
   (contains-point? [this other])
   (intersects-shape [_ s]))
 
+(defrecord Circle [center ^double radius])
+
 (defrecord Rectangle [^double xmin ^double ymin ^double xmax ^double ymax]
-  IIntersectAble
+  IIntersectable
   (contains-point? [_ [^double x ^double y]]
     (and (>= x xmin)
          (<= x xmax)
@@ -44,6 +46,17 @@
                            (- ymin y)
                            :else 0)]
           (+ (* x-dist x-dist) (* y-dist y-dist))))))
+
+(extend-type Circle
+  IIntersectable
+  (contains-point? [{:keys [center radius]} pt]
+    (<= (p/distance-sq pt center) radius))
+  (intersects-shape [{:keys [center radius]} s]
+    (cond (instance? Rectangle s)
+          (<= (distance-squared s center) radius)
+          (instance? Circle s)
+          ;; hvordan fikse referanser slik??
+          (<= (p/distance-sq center (:center s)) (+ radius (:radius s))))))
 
 (defn left-of [^Rectangle rect [^double x :as pt]]
   (when-not (contains-point? rect pt)
@@ -74,101 +87,123 @@
 (defn- tree-cons [root pt]
   (loop [path []
          vertical true]
-    (if-let [{:keys [value] :as curr-node} (get-in root path)]
+    ;; If the current path exists
+    (if-let [{:keys [value]} (get-in root path)]
       (let [comparator-fn (if vertical first second)
             current-compare-res (<= (comparator-fn pt) (comparator-fn value))]
-        (cond (= value pt) root
-              current-compare-res
-              (recur (conj path :lower) (not vertical))
-              :else
-              (recur (conj path :higher) (not vertical))))
+        (cond
+          ;; If pt already in tree, just return the tree
+          (= value pt)
+          root
+          ;; If pt is lower than current value, recur with :lower appended to path
+          current-compare-res
+          (recur (conj path :lower) (not vertical))
+          :else
+          (recur (conj path :higher) (not vertical))))
+      ;; We are in the case of a non-existing node
+      ;; If path is empty, it means the tree was nil. Return a root node.
       (if (empty? path)
         (assoc
          (->TreeNode pt vertical (->Rectangle 0 0 1 1)) :size 1)
-        (let [{prev-pt :value prev-rect :rect :as prev-node} (get-in root (pop path))
+        ;; Otherwise, insert a new node at the current path
+        (let [{prev-pt :value prev-rect :rect} (get-in root (pop path))
               curr-key (peek path)]
           (-> root
               (update :size inc)
-              (assoc-in path (->TreeNode pt vertical (if vertical
-                                                       (if (= curr-key :lower)
-                                                         (below-of prev-rect prev-pt)
-                                                         (top-of prev-rect prev-pt))
-                                                       (if (= curr-key :lower)
-                                                         (left-of prev-rect prev-pt)
-                                                         (right-of prev-rect prev-pt)))))))))))
+              (assoc-in path
+                        (->TreeNode pt vertical
+                                    (if vertical
+                                      (if (= curr-key :lower)
+                                        (below-of prev-rect prev-pt)
+                                        (top-of prev-rect prev-pt))
+                                      (if (= curr-key :lower)
+                                        (left-of prev-rect prev-pt)
+                                        (right-of prev-rect prev-pt)))))))))))
 
-(defn- worth-exploring? [node best-so-far pt]
-  (< (distance-squared node pt) (p/distance-sq pt best-so-far)))
+(defn- worth-exploring?
+  "Is the `rect` worth exploring when looking for pt?"
+  [rect best-so-far pt]
+  (< (distance-squared rect pt) (p/distance-sq pt best-so-far)))
+
+(defn- tree-nearest
+  "Find the nearest pt in the tree represented by root."
+  [root pt]
+  (if (nil? root) nil
+      (loop [best-so-far (:value root)
+             paths [[]]]
+        (let [current-path (peek paths)
+              {:keys [value lower higher vertical] :as current-node} (get-in root current-path)
+              best-so-far* (min-key #(p/distance-sq pt %) value best-so-far)]
+          (cond
+            ;; The stack of paths to be explored is empty, return best-so-far
+            (nil? current-path)
+            best-so-far
+            ;; If pt = value, then no need to do anything more
+            (= pt value)
+            value
+            ;; Both children exist
+            (and lower higher)
+            (let [comparator-fn (if vertical first second)
+                  current-compare-res (<= (comparator-fn pt) (comparator-fn value))
+                  ;; Explore closest node first
+                  child-nodes  (if current-compare-res '(:higher :lower) '(:lower :higher))
+                  v (->> child-nodes
+                         ;; Filter nodes worth exploring
+                         (transduce (comp (filter #(worth-exploring? (:rect (% current-node)) best-so-far* pt))
+                                          (map #(conj current-path %))) conj (pop paths)))]
+              (recur best-so-far* v))
+            (some? lower)
+            (if (worth-exploring? (:rect lower) best-so-far* pt)
+              (recur best-so-far* (conj (pop paths) (conj current-path :lower)))
+              (recur best-so-far* (pop paths)))
+            (some? higher)
+            (if (worth-exploring? (:rect higher) best-so-far* pt)
+              (recur best-so-far* (conj (pop paths) (conj current-path :higher)))
+              (recur best-so-far* (pop paths)))
+            :else
+            (recur best-so-far* (pop paths)))))))
+
+;; TODO: dont traverse all rectangles
+(defn- tree-insersect-rect [root other-rect]
+  (if (nil? root) #{}
+      (loop [points #{}
+             paths [[]]]
+        (if (empty? paths)
+          points
+          (let [current-path (peek paths)
+                {:keys [value lower higher]} (get-in root current-path)]
+            (recur (if (contains-point? other-rect value) (conj points value) points)
+                   (cond (and lower higher)
+                         (conj (pop paths) (conj current-path :lower) (conj current-path :higher))
+                         (some? lower)
+                         (conj (pop paths) (conj current-path :lower))
+                         (some? higher)
+                         (conj (pop paths) (conj current-path :higher))
+                         :else (pop paths))))))))
 
 (deftype TwoTree [root]
   I2DTree
   (value [_]
     (:value root))
-  (intersect-rect [this other-rect]
-    (if (nil? root) #{}
-        (loop [points #{}
-               paths [[]]]
-          (if (empty? paths)
-            points
-            (let [current-path (peek paths)
-                  {:keys [value lower higher vertical rect] :as current-node} (get-in root current-path)]
-              (recur (if (contains-point? other-rect value) (conj points value) points)
-                     (cond (and lower higher)
-                           (conj (pop paths) (conj current-path :lower) (conj current-path :higher))
-                           (some? lower)
-                           (conj (pop paths) (conj current-path :lower))
-                           (some? higher)
-                           (conj (pop paths) (conj current-path :higher))
-                           :else (pop paths))))))))
+  (intersect-rect [_ other-rect]
+    (tree-insersect-rect root other-rect))
 
-  (nearest [this pt]
-    (if (nil? root) nil
-        (loop [best-so-far (:value root)
-               paths [[]]]
-          (let [current-path (peek paths)
-                {:keys [value lower higher vertical] :as current-node} (get-in root current-path)
-                best-so-far* (min-key #(p/distance-sq pt %) value best-so-far)]
-            (cond
-              ;; The stack of paths to be explored is empty, return best-so-far
-              (nil? current-path)
-              best-so-far
-              ;; If pt = value, then no need to do anything more
-              (= pt value)
-              value
-              ;; Both children exist
-              (and lower higher)
-              (let [comparator-fn (if vertical first second)
-                    current-compare-res (<= (comparator-fn pt) (comparator-fn value))
-                    ;; Explore closest node first
-                    child-nodes  (if current-compare-res '(:higher :lower) '(:lower :higher))
-                    v (->> child-nodes
-                           ;; Filter nodes worth exploring
-                           (transduce (comp (filter #(worth-exploring? (:rect (% current-node)) best-so-far* pt))
-                                            (map #(conj current-path %))) conj (pop paths)))]
-                (recur best-so-far* v))
-              (some? lower)
-              (if (worth-exploring? (:rect lower) best-so-far* pt)
-                (recur best-so-far* (conj (pop paths) (conj current-path :lower)))
-                (recur best-so-far* (pop paths)))
-              (some? higher)
-              (if (worth-exploring? (:rect higher) best-so-far* pt)
-                (recur best-so-far* (conj (pop paths) (conj current-path :higher)))
-                (recur best-so-far* (pop paths)))
-              :else
-              (recur best-so-far* (pop paths)))))))
+  (nearest [_ pt]
+    (tree-nearest root pt))
 
   clojure.lang.ISeq
-  (first [this]
+  (first [_]
     (letfn [(first* [{:keys [lower value]}]
               (if lower (recur lower) value))]
       (first* root)))
-  (cons [this pt]
+  (cons [_ pt]
     (TwoTree. (tree-cons root pt)))
 
   (next [this]
     (seq (.more this)))
-  (more [this]
-    (letfn [(more* [{:keys [lower higher] :as node} path]
+
+  (more [_]
+    (letfn [(more* [{:keys [lower higher]} path]
               (cond
                 lower (recur lower (conj path :lower))
                 (seq path) (TwoTree. (assoc-in root path higher))
@@ -190,34 +225,29 @@
     (if (nil? root) 0 (:size root)))
 
   clojure.lang.IPersistentSet
-  (disjoin [this other]
+  (disjoin [_ _]
     (throw (Exception. "Not supported")))
 
   (contains [this pt]
-    #_(when (instance? clojure.lang.Keyword pt)
-        (throw (Exception. "ops")))
-    (if (nil? root) false
+    (boolean (get this pt)))
+
+  (get [_ pt]
+    (if (nil? root) nil
         (loop [path []]
-          (if-let [{:keys [value ^boolean vertical] :as curr-node} (get-in root path)]
+          (if-let [{:keys [value ^boolean vertical]} (get-in root path)]
             (let [comparator-fn (if vertical second first)
                   current-compare-res (<= (comparator-fn pt) (comparator-fn value))]
-              (cond (= value pt) true
+              (cond (= value pt) value
                     current-compare-res
                     (recur (conj path :lower))
                     :else
                     (recur (conj path :higher))))
-            false))))
-
-  (get [this pt]
-    ;; TODO search for pt
-    pt)
+            nil))))
 
   Object
   (toString [_]
     (str "Tree" " " root)))
 
-clojure.lang.IMeta
-with-meta
 ;; to avoid crash
 ;; See this issue https://github.com/thi-ng/color/pull/11
 (prefer-method clojure.pprint/simple-dispatch clojure.lang.ISeq clojure.lang.IPersistentSet)
@@ -225,8 +255,8 @@ with-meta
 (defmethod print-method TwoTree [tree ^java.io.Writer w]
   (.write w (str "Tree" " " (.root tree))))
 
-(defn two-tree []
-  (TwoTree. nil))
+(defn two-tree [& xs]
+  (reduce conj (TwoTree. nil) xs))
 
 (comment
   ;; Preserves metadata
@@ -273,10 +303,15 @@ with-meta
   another-tree)
 
 (comment
-  (.getMethods clojure.lang.ISeq))
+  )
 
 (comment
-  (defn scaffold [iface]
+  (.getMethods clojure.lang.ISeq)
+
+)
+
+(comment
+    (defn scaffold [iface]
     (doseq [[iface methods] (->> iface .getMethods
                                  (map #(vector (.getName (.getDeclaringClass %))
                                                (symbol (.getName %))

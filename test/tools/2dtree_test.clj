@@ -115,6 +115,22 @@
       (c/quick-bench (s/nearest t p) :verbose)))
   ;
   )
+(comment
+  (let [point-sets (gen/sample (points-gen 10000 10000) 100)
+        trees (map #(identity [(rand-nth %) (apply s/two-tree %)]) point-sets)]
+    (c/with-progress-reporting
+      (c/bench (doseq [[_ [p t]] (partition 2 2 (interleave point-sets trees))]
+                       (contains? t p)) :verbose))) ;; 259 microms
+
+    ;;
+
+   (let [point-sets (gen/sample (points-gen 1000 1000) 100)
+        trees (map #(identity [(rand-nth %) (apply s/two-tree %)]) point-sets)]
+    (c/with-progress-reporting
+      (c/bench (doseq [[_ [p t]] (partition 2 2 (interleave point-sets trees))]
+                       (s/nearest t p)) :verbose))) ;; 919 microms
+;;
+  )
 
 (comment
   (with-redefs [c/*sample-count* 60]

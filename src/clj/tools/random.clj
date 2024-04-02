@@ -4,6 +4,7 @@
             [tools.points]
             [clojure.spec.gen.alpha :as gen]))
 
+
 (defn random
   ([]
    (rand))
@@ -34,4 +35,4 @@
    (random-pts n [0 1] [0 1])))
 
 (comment
-  (st/check `random-pt))
+    (st/check `random-pt))

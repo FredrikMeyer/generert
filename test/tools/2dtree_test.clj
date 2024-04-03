@@ -66,13 +66,20 @@
     (let [pts (r/random-pts 100)
           t (reduce conj (s/two-tree) pts)]
       (is (= (nearest-by-sort pts [0.5 0.5])
-             (s/nearest t [0.5 0.5]))))))
+             (s/nearest t [0.5 0.5])))))
+
+  (t/testing "intersect rect"
+    (is (= #{[0.1 0.1] [0.2 0.3] [0.4 0.4]}
+           (s/intersect-rect (s/two-tree [0.1 0.1] [0.2 0.3] [0.4 0.4]) (s/->Rectangle 0 0 0.5 0.5))))))
 
 (deftest Rectangle-test
   (is (= true (s/contains-point? (s/->Rectangle 0 0 1 1) [0 0]))
       (= false (s/contains-point? (s/->Rectangle 0 0 1 1) [1 2])))
   (is (= 0 (s/distance-squared (s/->Rectangle 0 0 1 1) [0.5 0.5]))
-      (= 2 (s/distance-squared (s/->Rectangle 0 0 1 1) [2 2]))))
+      (= 2 (s/distance-squared (s/->Rectangle 0 0 1 1) [2 2])))
+  (t/testing "intersect rect"
+    (is (= true (s/intersects-shape? (s/->Rectangle 0.2 0.2 0.8 0.8)
+                                     (s/->Rectangle 0 0 0.5 0.5))))))
 
 (deftest left-of-test
   (is (thrown? Exception (s/left-of (s/->Rectangle 0 0 1 1) [5 5])))
@@ -84,17 +91,17 @@
       (gen/vector 2)
       (gen/vector min-length max-length)))
 
-(def prop (prop/for-all [[p & pts] (points-gen 3 50)]
-                        (let [t (reduce conj (s/two-tree) pts)
-                              correct-answer (nearest-by-sort pts p)
-                              correct-dist (p/distance-sq correct-answer p)
-                              tree-answ (s/nearest t p)
-                              tree-dist (p/distance-sq tree-answ p)]
+(def prop-nearest (prop/for-all [[p & pts] (points-gen 3 50)]
+                                (let [t (reduce conj (s/two-tree) pts)
+                                      correct-answer (nearest-by-sort pts p)
+                                      correct-dist (p/distance-sq correct-answer p)
+                                      tree-answ (s/nearest t p)
+                                      tree-dist (p/distance-sq tree-answ p)]
 
-                          (= correct-dist tree-dist))))
+                                  (= correct-dist tree-dist))))
 
 (deftest nearest-generative
-  (is (= nil (let [res (tc/quick-check 10000 prop)]
+  (is (= nil (let [res (tc/quick-check 10000 prop-nearest)]
                (when (not (:pass? res))
                  (let [failed (first (:smallest (:shrunk res)))
                        t (reduce conj (s/two-tree) failed)
@@ -106,6 +113,30 @@
                     :tree-answ tree-answ
                     :tree-dist (p/distance-sq [0.5 0.5] tree-answ)
                     :correct-dist (p/distance-sq [0.5 0.5] answ)
+                    :answ answ}))))))
+
+(def prop-intersect-rect (prop/for-all [pts (points-gen 3 50)]
+                                       (let [t (reduce conj (s/two-tree) pts)
+                                             correct-answer (->> t
+                                                                 (filter (fn [p] (s/contains-point? (s/->Rectangle 0.2 0.2 0.8 0.8) p)))
+                                                                 set)
+                                             tree-answ (s/intersect-rect t (s/->Rectangle 0.2 0.2 0.8 0.8))]
+
+                                         (= (count correct-answer) (count tree-answ)))))
+
+(deftest intersect-rect-generative
+  (is (= nil (let [res (tc/quick-check 10000 prop-intersect-rect)]
+               (when (not (:pass? res))
+                 (let [failed (first (:smallest (:shrunk res)))
+                       t (reduce conj (s/two-tree) failed)
+                       answ (->> t
+                                 (filter (fn [p] (s/contains-point? (s/->Rectangle 0.2 0.2 0.8 0.8) p)))
+                                 set)
+                       tree-answ (s/intersect-rect t (s/->Rectangle 0.2 0.2 0.8 0.8))]
+                   {:tree t
+                    :failed failed
+                    :root (.root t)
+                    :tree-answ tree-answ
                     :answ answ}))))))
 
 (comment
@@ -120,15 +151,15 @@
         trees (map #(identity [(rand-nth %) (apply s/two-tree %)]) point-sets)]
     (c/with-progress-reporting
       (c/bench (doseq [[_ [p t]] (partition 2 2 (interleave point-sets trees))]
-                       (contains? t p)) :verbose))) ;; 259 microms
+                 (contains? t p)) :verbose))) ;; 259 microms
 
     ;;
 
-   (let [point-sets (gen/sample (points-gen 1000 1000) 100)
+  (let [point-sets (gen/sample (points-gen 1000 1000) 100)
         trees (map #(identity [(rand-nth %) (apply s/two-tree %)]) point-sets)]
     (c/with-progress-reporting
       (c/bench (doseq [[_ [p t]] (partition 2 2 (interleave point-sets trees))]
-                       (s/nearest t p)) :verbose))) ;; 919 microms
+                 (s/nearest t p)) :verbose))) ;; 919 microms
 ;;
   )
 

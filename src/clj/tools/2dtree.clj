@@ -13,8 +13,8 @@
   (distance-squared [this p]))
 
 (defprotocol IIntersectable
-  (contains-point? [this other])
-  (intersects-shape [_ s]))
+  (contains-point? [this pt])
+  (intersects-shape? [_ s]))
 
 (defrecord Circle [center ^double radius])
 
@@ -25,12 +25,12 @@
          (<= x xmax)
          (>= y ymin)
          (<= y ymax)))
-  (intersects-shape [_ s]
+  (intersects-shape? [_ s]
     (cond (instance? Rectangle s)
-          (not (or (> xmin (:xmin s))
-                   (> ymin (:ymin s))
-                   (< xmax (:xmax s))
-                   (< ymax (:ymax s))))
+          (not (or (> ymin (:ymax s))
+                   (< ymax (:ymin s))
+                   (> xmin (:xmax s))
+                   (< xmax (:xmin s))))
           :else (throw (Exception. "Unsupported intersection"))))
   IDistance
   (distance-squared [this [^double x ^double y :as p]]
@@ -51,7 +51,7 @@
   IIntersectable
   (contains-point? [{:keys [center radius]} pt]
     (<= (p/distance-sq pt center) radius))
-  (intersects-shape [{:keys [center radius]} s]
+  (intersects-shape? [{:keys [center radius]} s]
     (cond (instance? Rectangle s)
           (<= (distance-squared s center) radius)
           (instance? Circle s)
@@ -163,7 +163,6 @@
             :else
             (recur best-so-far* (pop paths)))))))
 
-;; TODO: dont traverse all rectangles
 (defn- tree-insersect-rect [root other-rect]
   (if (nil? root) #{}
       (loop [points #{}
@@ -171,15 +170,13 @@
         (if (empty? paths)
           points
           (let [current-path (peek paths)
-                {:keys [value lower higher]} (get-in root current-path)]
+                {:keys [value] :as current-node} (get-in root current-path)]
             (recur (if (contains-point? other-rect value) (conj points value) points)
-                   (cond (and lower higher)
-                         (conj (pop paths) (conj current-path :lower) (conj current-path :higher))
-                         (some? lower)
-                         (conj (pop paths) (conj current-path :lower))
-                         (some? higher)
-                         (conj (pop paths) (conj current-path :higher))
-                         :else (pop paths))))))))
+                   (apply conj (pop paths)
+                          (->> [:higher :lower]
+                               (filter (fn [t] (when-let [child-node (t current-node)]
+                                                 (intersects-shape? other-rect (:rect child-node)))))
+                               (map #(conj current-path %))))))))))
 
 (deftype TwoTree [root]
   I2DTree
@@ -302,16 +299,13 @@
   (def another-tree (conj a-tree [0 0] [1 2] [3 4]))
   another-tree)
 
-(comment
-  )
+(comment)
 
 (comment
-  (.getMethods clojure.lang.ISeq)
-
-)
+  (.getMethods clojure.lang.ISeq))
 
 (comment
-    (defn scaffold [iface]
+  (defn scaffold [iface]
     (doseq [[iface methods] (->> iface .getMethods
                                  (map #(vector (.getName (.getDeclaringClass %))
                                                (symbol (.getName %))
@@ -327,29 +321,29 @@
 
   (deftype AtomHash [val]
     Object
-    (toString [this] (str "<AtomHash " @val ">"))
+    (toString [_] (str "<AtomHash " @val ">"))
     clojure.lang.IPersistentMap
     clojure.lang.ILookup
-    (valAt [this key] (get @val key))
-    (valAt [this key notfound] (get @val key notfound))
+    (valAt [_ key] (get @val key))
+    (valAt [_ key notfound] (get @val key notfound))
     clojure.lang.IPersistentCollection
-    (count [this] (.count @val))
-    (empty [this] {})
-    (cons [this e] (.cons @val e))
+    (count [_] (.count @val))
+    (empty [_] {})
+    (cons [_ e] (.cons @val e))
     (equiv [this gs] (or (identical? this gs)
                          (when (identical? (class this) (class gs))
                            (= val (.val gs)))))
     clojure.lang.Associative
-    (containsKey [this k] (or (and (get @val k) true) false))
-    (entryAt [this k] (get @val k))
+    (containsKey [_ k] (or (and (get @val k) true) false))
+    (entryAt [_ k] (get @val k))
     clojure.lang.Seqable
-    (seq [this] (seq @val))
+    (seq [_] (seq @val))
     clojure.lang.IPersistentMap
-    (assoc [this k g] (assoc @val k g))
+    (assoc [_ k g] (assoc @val k g))
     (assocEx [this k g] (assoc this k g))
-    (without [this k] (.without @val k))
+    (without [_ k] (.without @val k))
     clojure.lang.IDeref
-    (deref [this] @val)))
+    (deref [_] @val)))
 ;;REPLACE namespace with implementation namespace
 (comment (defmethod print-dup AtomHash [o w]
            (.write w "#=(util/atom-hash ") (print-dup @o w) (.write w ")")))

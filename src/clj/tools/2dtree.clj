@@ -82,6 +82,18 @@
   (-> rect
       (assoc :ymax y)))
 
+;; Copied from here: https://github.com/clojure/data.finger-tree/blob/master/src/main/clojure/clojure/data/finger_tree.clj
+(defn- seq-equals [a b]
+  (boolean
+    (when (or (sequential? b) (instance? java.util.List b))
+      (loop [a (seq a)
+             b (seq b)]
+        (when (= (nil? a) (nil? b))
+          (or
+            (nil? a)
+            (when (= (first a) (first b))
+              (recur (next a) (next b)))))))))
+
 (defrecord TreeNode [value vertical rect])
 
 (defn- tree-cons [root pt]
@@ -178,7 +190,7 @@
                                                  (intersects-shape? other-rect (:rect child-node)))))
                                (map #(conj current-path %))))))))))
 
-(deftype TwoTree [root]
+(deftype TwoTree [^TreeNode root]
   I2DTree
   (value [_]
     (:value root))
@@ -207,13 +219,15 @@
                 :else (TwoTree. higher)))]
       (more* root [])))
 
+  clojure.lang.Sequential
   clojure.lang.Seqable
   (seq [this]
     (when (contains? root :value) this))
 
   clojure.lang.IPersistentCollection
-  (equiv [_ other]
-    (= root (.root other)))
+  (equiv [this other]
+    (seq-equals this other)
+    )
   (empty [_]
     (TwoTree. nil))
 
@@ -249,7 +263,7 @@
 ;; See this issue https://github.com/thi-ng/color/pull/11
 (prefer-method clojure.pprint/simple-dispatch clojure.lang.ISeq clojure.lang.IPersistentSet)
 
-(defmethod print-method TwoTree [tree ^java.io.Writer w]
+(defmethod print-method TwoTree [^TwoTree tree ^java.io.Writer w]
   (.write w (str "Tree" " " (.root tree))))
 
 (defn two-tree [& xs]

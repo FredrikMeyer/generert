@@ -233,7 +233,7 @@
 
   clojure.lang.Counted
   (count [_]
-    (if (nil? root) 0 (:size root)))
+    (get root :size 0))
 
   clojure.lang.IPersistentSet
   (disjoin [_ _]

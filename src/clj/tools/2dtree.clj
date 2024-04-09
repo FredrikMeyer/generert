@@ -85,14 +85,14 @@
 ;; Copied from here: https://github.com/clojure/data.finger-tree/blob/master/src/main/clojure/clojure/data/finger_tree.clj
 (defn- seq-equals [a b]
   (boolean
-    (when (or (sequential? b) (instance? java.util.List b))
-      (loop [a (seq a)
-             b (seq b)]
-        (when (= (nil? a) (nil? b))
-          (or
-            (nil? a)
-            (when (= (first a) (first b))
-              (recur (next a) (next b)))))))))
+   (when (or (sequential? b) (instance? java.util.List b))
+     (loop [a (seq a)
+            b (seq b)]
+       (when (= (nil? a) (nil? b))
+         (or
+          (nil? a)
+          (when (= (first a) (first b))
+            (recur (next a) (next b)))))))))
 
 (defrecord TreeNode [value vertical rect])
 
@@ -226,8 +226,7 @@
 
   clojure.lang.IPersistentCollection
   (equiv [this other]
-    (seq-equals this other)
-    )
+    (seq-equals this other))
   (empty [_]
     (TwoTree. nil))
 

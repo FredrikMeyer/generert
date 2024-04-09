@@ -7,7 +7,9 @@
                :t (s/and number? #(< % 1000) #(> % -1000)))
   :ret :tools.points/point)
 
-(defn point-on-line [p1 p2 t]
+
+
+(defn point-on-line [p1 p2 ^double t]
   (let [[x1 y1] p1
         [x2 y2] p2]
     [(+ (* (- 1 t) x1) (* t x2)),

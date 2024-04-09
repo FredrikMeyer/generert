@@ -10,12 +10,9 @@
   (q/color-mode :hsb 360 w h 100)
   (q/no-stroke)
   (q/stroke-weight 0)
-  {
-   :segment-count 45
+  {:segment-count 45
    :saturation 0
-   :brightness 0
-   })
-
+   :brightness 0})
 
 (defn draw [state]
   (q/begin-shape :triangle-fan)
@@ -26,12 +23,9 @@
       (let [vx (+ (/ w 2) (* radius (Math/cos (q/radians phi))))
             vy (+ (/ h 2) (* radius (Math/sin (q/radians phi))))]
         (q/vertex vx vy)
-        (q/fill phi (:saturation state) (:brightness state))
-        )
-      )
-    )
-  (q/end-shape)
-  )
+        (q/fill phi (:saturation state) (:brightness state)))))
+
+  (q/end-shape))
 
 (defn update-state [state]
   state)

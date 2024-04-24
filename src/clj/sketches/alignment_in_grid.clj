@@ -1,4 +1,4 @@
-(ns alignment-in-grid.alignment-in-grid
+(ns sketches.alignment-in-grid
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as dr]))

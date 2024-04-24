@@ -1,4 +1,4 @@
-(ns two-lines.core
+(ns sketches.two-lines
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.lines :as gtl]

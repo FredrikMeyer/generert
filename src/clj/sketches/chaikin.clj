@@ -1,4 +1,4 @@
-(ns chaikin.core
+(ns sketches.chaikin
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as d]

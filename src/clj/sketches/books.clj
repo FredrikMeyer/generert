@@ -1,4 +1,4 @@
-(ns books.core
+(ns sketches.books
   (:require [quil.core :as q]
             [tools.random :as r]
             [tools.drawing :as d]

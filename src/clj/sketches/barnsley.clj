@@ -1,4 +1,4 @@
-(ns barnsley.core
+(ns sketches.barnsley
   (:require
    [quil.core :as q]
    [quil.middleware :as m]
@@ -27,7 +27,7 @@
   (make-transformation [-0.15 0.28 0.26 0.24 0 0.44 0.07]))
 
 (defn in-interval [a b x]
-    (and (> b x) (< a x)))
+  (and (> b x) (< a x)))
 
 (defn transform [p]
   (let [r (rand)]
@@ -48,7 +48,6 @@
             ym (q/map-range y 0 9.9983 h 0)]
         (apply q/point [xm ym]))
       (recur (dec n) (transform p)))))
-
 
 (defn update-state [state]
   state)

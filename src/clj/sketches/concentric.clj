@@ -1,7 +1,5 @@
-(ns concentric.core
+(ns sketches.concentric
   (:require [quil.core :as q]
-            [quil.sketch :as qs]
-            [quil.applet :as qa]
             [quil.middleware :as m]
             [tools.drawing :as t]))
 
@@ -17,10 +15,8 @@
   (q/no-fill)
   (q/random-seed 42)
   (q/noise-seed 42)
-  {
-   :noise-start 0
-   :loop true
-   })
+  {:noise-start 0
+   :loop true})
 
 (defn circle-point [theta r]
   (let [X (+ (cx) (* r (Math/cos theta)))
@@ -60,7 +56,6 @@
   (reset! w (q/width))
   (reset! h (q/height))
 
- 
   (draw (:noise-start state))
   (if (not (:loop state)) (q/no-loop)
       (q/start-loop))

@@ -1,4 +1,4 @@
-(ns supershape.core
+(ns sketches.supershape
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as dr]))

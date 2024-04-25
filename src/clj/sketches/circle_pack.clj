@@ -1,4 +1,4 @@
-(ns circle-pack.core
+(ns sketches.circle-pack
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as d]
@@ -142,8 +142,7 @@
   (loop [n 0
          circles [;; (Circle. [(/ w 2) (/ h 2)] 50)
                   (Circle. [450 450] -400)
-                  (Circle. [(/ w 4) (/ h 4)] 0)                 
-                  ]]
+                  (Circle. [(/ w 4) (/ h 4)] 0)]]
     (if (and (< n max-iterations) (< (count circles) points-goal))
       (let [line (get-random-line)
             ;; pt (get-random-pt) ;;  (random-point-on-sides 50) ;; (r/random-pt [50 (- w 50)] [50 (- h 50)])
@@ -225,9 +224,6 @@
         (q/line x y a b)
         #_(draw-circle c))))
 
-
-
-  
   (comment
 
     (loop [tree (conj (twod/two-tree)
@@ -281,7 +277,7 @@
 (defn draw-state [_]
   (q/background 0)
   #_(q/with-fill [0 100]
-    (q/rect 0 0 w h))
+      (q/rect 0 0 w h))
   (time (draw))
   (println "Done")
   (q/no-loop))

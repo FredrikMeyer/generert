@@ -1,4 +1,4 @@
-(ns circles-in-circles.main
+(ns sketches.circles-in-circles
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 

@@ -1,7 +1,7 @@
 (ns user
   (:require [quil.core :as q]
             [tools.drawing :as t]
-            [differential-growth.core :as dgc]))
+            [sketches.differential-growth :as dgc]))
 
 ;; importts stuff here to improve start time
 ;; https://github.com/puredanger/startup-time

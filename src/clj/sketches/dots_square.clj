@@ -1,4 +1,4 @@
-(ns dots_square.core
+(ns sketches.dots-square
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as d]
@@ -87,7 +87,6 @@
 
     (q/with-stroke [100 20]
       (random-small-lines-in-circle [cx cy] (- (* 0.5 square-diameter) 100) 10000))
-    
 
     (comment
       (q/with-stroke [100 50 100 80]

@@ -1,4 +1,4 @@
-(ns parallels.core
+(ns sketches.parallels
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.lines :as l]

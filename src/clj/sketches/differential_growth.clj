@@ -1,4 +1,4 @@
-(ns differential-growth.core
+(ns sketches.differential-growth
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as d]

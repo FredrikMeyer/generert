@@ -1,4 +1,4 @@
-(ns pillars.core
+(ns sketches.pillars
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as td]))

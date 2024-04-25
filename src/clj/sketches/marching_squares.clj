@@ -1,4 +1,4 @@
-(ns marching-squares.core
+(ns sketches.marching-squares
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as tools]))

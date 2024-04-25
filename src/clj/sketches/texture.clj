@@ -1,4 +1,4 @@
-(ns texture.core
+(ns sketches.texture
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 

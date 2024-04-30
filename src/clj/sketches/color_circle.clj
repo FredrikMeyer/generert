@@ -1,4 +1,4 @@
-(ns color-circle.core
+(ns sketches.color-circle
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [tools.drawing :as t]))

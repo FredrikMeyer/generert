@@ -10,12 +10,12 @@
     "lint": "eslint --ext .ts,.js,.tsx,.jsx src"
   },
   "dependencies": {
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.2.0",
     "react-p5": "^1.4.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.74",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.2.23",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",

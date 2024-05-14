@@ -1,4 +1,4 @@
-(ns lsystemquil.lsystem
+(ns sketches.lsystem
   (:require [clojure.string :as str]))
 
 (def L {:axiom "F-F-F-F"

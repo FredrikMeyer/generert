@@ -1,9 +1,9 @@
-(ns lsystemquil.core
+(ns sketches.lsystem-sketch
   (:require
    [clojure.core.match :as match]
-   [lsystemquil.lsystem :as l]
    [quil.core :as q]
    [quil.middleware :as m]
+   [sketches.lsystem :as l]
    [tools.drawing :as dr]))
 
 (def w 800)

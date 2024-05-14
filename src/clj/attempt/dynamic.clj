@@ -1,13 +1,11 @@
 (ns attempt.dynamic
-  (:require [quil.core :as q]
-            [tools.lines :as t]))
+  (:require
+   [quil.core :as q]
+   [quil.middleware :as m]
+   [tools.drawing :as td]))
 
 (def w 900)
 (def h 900)
-
-
-(def cx (/ w 2))
-(def cy (/ h 2))
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
@@ -18,31 +16,6 @@
 
 (defn update-state [state]
   state)
-
-(defn rand-float [low high]
-  (let [r (rand)
-        stretched (* r (- high low))
-        translated (+ stretched low)]
-    translated))
-
-(defn direction
-  "Get the direction vector"
-  [[a b] [x y]]
-  [(- x a) (- y b)])
-
-(defn square [a] (* a a))
-
-(defn sq-dist [[a b] [x y]]
-  (+ (square (- x a)) (square (- y b))))
-
-(defn unitize [p]
-  (let [length (Math/sqrt (apply + (map square p)))]
-    (map (fn [c] (/ c length)) p))
-  )
-
-(defn opposite-force [[a b] [loc-x loc-y]]
-  (let [dist (sq-dist [a b] [loc-x loc-y])]
-    (/ 1000 dist)))
 
 (defn v-field [x y]
   (let [factor 1]
@@ -78,14 +51,14 @@
   (q/stroke 100 10)
   (q/stroke-weight 2)
   (q/no-fill)
-  (let [start-points (map point-to-walker (get-random-points 10000))]
-    (let [mapped-points (map (fn [m] (iterate-mover m 50 v-field)) start-points)
-          partitioned (map (fn [p] (partition 2 1 p)) mapped-points)]
-      (doseq [grp partitioned]
-        (doseq [[p1 p2] grp]
-          (q/line [(:x p1) (:y p1)] [(:x p2) (:y p2)])
+  (let [start-points (map point-to-walker (get-random-points 10000))
+        mapped-points (map (fn [m] (iterate-mover m 50 v-field)) start-points)
+        partitioned (map (fn [p] (partition 2 1 p)) mapped-points)]
+    (doseq [grp partitioned]
+      (doseq [[p1 p2] grp]
+        (q/line [(:x p1) (:y p1)] [(:x p2) (:y p2)])
           ;; (q/ellipse (:x p1) (:y p1) 10 10)
-          )))))
+        ))))
 
 (defn draw-state [state]
   (println "Drawing")
@@ -95,3 +68,16 @@
   (q/start-loop)
   (println "Done")
   (q/no-loop))
+
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
+(defn sketch []
+  (q/defsketch #_:clj-kondo/ignore attempt
+    :title "You spin my circle right round"
+    :size [w h]
+    :setup setup
+    :update update-state
+    :mouse-clicked (td/save-on-click-handler "attempt")
+    :key-pressed td/redraw
+    :draw draw-state
+    :features [:no-bind-output :pause-on-error]
+    :middleware [m/fun-mode m/pause-on-error]))

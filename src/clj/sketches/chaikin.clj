@@ -1,9 +1,10 @@
 (ns sketches.chaikin
-  (:require [quil.core :as q]
-            [quil.middleware :as m]
-            [tools.drawing :as d]
-            [tools.random :as r]
-            [tools.lines :as gtl]))
+  (:require
+   [quil.core :as q]
+   [quil.middleware :as m]
+   [tools.chaikin :refer [chaikin-curve copy-first-to-end]]
+   [tools.drawing :as d]
+   [tools.random :as r]))
 
 (def w 900)
 (def h 900)
@@ -13,12 +14,6 @@
   (q/stroke 100 10)
   {})
 
-(defn copy-first-to-end
-  "Copy the first element of a seq to the end."
-  [xs]
-  (let [frst (first xs)]
-    (concat xs [frst])))
-
 (defn draw-points
   "Given a list of points, draw lines connecting them."
   [pts]
@@ -27,26 +22,6 @@
       (let [[p1 p2] (take 2 ps)]
         (q/line p1 p2)
         (recur (rest ps))))))
-
-(defn iterate-chaikin
-  "Given a list of points, use the Chaikin algorithm to smooth the line between them. If ratio
-  is not given, uses default value of 0.75."
-  [pts & {:keys [closed ratio] :or {closed false ratio 0.25}}]
-  (let [pts-new pts
-        segments (partition 2 1 pts-new)
-        new-pts (mapcat (fn [[a b]]
-                          (let [q (gtl/point-on-line a b ratio)
-                                r (gtl/point-on-line a b (- 1 ratio))]
-                            [q r])) segments)]
-    (if closed
-      (copy-first-to-end new-pts)
-      new-pts)))
-
-(defn chaikin-curve
-  "Generate a Chaikin curve from a list of points. If ratio is not given
-   uses default value of 0.25."
-  [pts n & {:keys [ratio closed] :or {closed false ratio 0.25}}]
-  (nth (iterate (fn [pts] (iterate-chaikin pts :ratio ratio :closed closed)) pts) n))
 
 (defn draw []
   (q/stroke 100)

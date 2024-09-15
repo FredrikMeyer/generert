@@ -1,4 +1,4 @@
-z(ns tools.shapes
+(ns tools.shapes
   (:require
    [tools.points :as pts]
    [quil.core :as q]))
@@ -54,7 +54,7 @@ z(ns tools.shapes
              (> xmin (:xmax r2))
              (< xmax (:xmin r2))))))
 
-;; (defn rectangle-intersect-circle [rect circle]
-  ;; (let [compare-pt ]))
+(defn rectangle-intersect-circle [rect circle]
+  (let []))
 
 

@@ -2,12 +2,12 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as st]))
 
-(s/def ::point (s/coll-of number? :count 2))
-(s/def ::args-add-pts (s/cat :y ::point :x ::point))
+(s/def ::point (s/coll-of (s/and number? #(not (Double/isNaN %))) :count 2 :kind vector?))
+(s/def ::args-two-pts (s/cat :y ::point :x ::point))
 (s/def ::args-mult (s/cat :c number? :p ::point))
 
 (s/fdef add-pts
-  :args ::args-add-pts
+  :args ::args-two-pts
   :ret ::point)
 
 (defn add-pts [y x]
@@ -28,12 +28,12 @@
 
 
 (s/fdef diff-pts
-  :args ::args-add-pts
+  :args ::args-two-pts
   :ret ::point)
 
 (defn diff-pts [x y]
   (let [negy (mult -1 y)]
-    (add-pts  x negy)))
+    (add-pts x negy)))
 
 (defn middle-pt [x y]
   (let [diff (diff-pts y x)
@@ -49,11 +49,22 @@
         l (Math/sqrt l2)]
     (with-meta [(/ a l) (/ b l)] (meta p))))
 
-(defn distance-sq [[a b] [x y]]
+
+(s/fdef distance-sq
+  :args ::args-two-pts
+  :ret (s/and number? #(>= % 0)))
+
+(defn distance-sq
+  "Returns the squared distance between two points [a,b] and [x,y]."
+  [[a b] [x y]]
   (let [neg (mult -1 [x y])
         [u v] (add-pts [a b] neg)
         l2 (+ (* u u) (* v v))]
     l2))
+
+(comment
+  (st/check `distance-sq)
+  )
 
 (s/fdef neg
   :args (s/cat :p ::point)

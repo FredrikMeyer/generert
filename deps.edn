@@ -5,7 +5,8 @@
   org.clojure/core.match {:mvn/version "1.1.0"},
   org.clojure/test.check {:mvn/version "1.1.1"},
   criterium/criterium {:mvn/version "0.4.6"},
-  quil/quil {:mvn/version "4.3.1563"}},
+  quil/quil {:mvn/version "4.3.1563"},
+  org.clojure/data.priority-map {:mvn/version "1.1.0"}},
  :aliases
  {:lein2deps {:deps
               {io.github.borkdude/lein2deps

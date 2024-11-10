@@ -54,32 +54,24 @@
              (> xmin (:xmax r2))
              (< xmax (:xmin r2))))))
 
-(defn is-above [{:keys [center]} {:keys [ymax]}]
-  (let [[_ y] center]
-    (> y ymax)))
+(defn closest-edge [{:keys [center]} {:keys [xmin xmax ymin ymax]}]
+  (let [[cx cy] center]
+    [(cond (< cx xmin) xmin
+           (> cx xmax) xmax
+           :else cx)
+     (cond (< cy ymin) ymin
+           (> cy ymax) ymax
+           :else cy)]))
 
-(defn is-below [{:keys [center]} {:keys [ymin]}]
-  (let [[_ y] center]
-    (< y ymin)))
-
-(defn is-left-of [{:keys [center]} {:keys [xmin]}]
-  (let [[x _] center]
-    (< x xmin)))
-
-(defn is-right-of [{:keys [center]} {:keys [xmax]}]
-  (let [[x _] center]
-    (> x xmax)))
-
-(defn circle-dist-to-edge [{:keys [center radius]} {:keys [ymin]}])
-
-(defn closest-corner [{:keys [center]} {:keys [xmin xmax ymin ymax]}]
-  (let [corners [[xmin ymin] [xmin ymax] [xmax ymin] [xmax ymax]]]
-    (->> corners
-         (sort-by (fn [p] (pts/distance-sq p center)))
-         (first))))
-
-(defn rectangle-intersect-circle [rect circle]
-  (let [corner (closest-corner circle rect)]
-    (< (pts/distance-sq corner (:center circle)) (:radius circle))))
+(defn rectangle-intersect-circle
+  "From here: https://www.jeffreythompson.org/collision-detection/circle-rect.php"
+  [rect circle]
+  (let [[cx cy] (:center circle)]
+    (or (and (< cx (:xmax rect))
+             (> cx (:xmin rect))
+             (< cy (:ymax rect))
+             (> cy (:ymin rect)))
+        (let [edge (closest-edge circle rect)]
+          (< (pts/distance-sq edge (:center circle)) (Math/pow (:radius circle) 2))))))
 
 

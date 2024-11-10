@@ -29,12 +29,14 @@
   (is (= false (s/rectangle-intersect-rectangle (s/->Rectangle 0 0 1 1)
                                                 (s/->Rectangle 10 1 11 2)))))
 
-(deftest circle-above-rect
-  (is (= true (s/is-above (s/->Circle [0 0] 1) (s/->Rectangle -1 -2 1 -1)))))
-
-(deftest circle-below-rect
-  (is (= true (s/is-below (s/->Circle [0 0] 1) (s/->Rectangle -1 2 1 1)))))
-
 (deftest rectangle-intersect-circle-test
   (is (= true (s/rectangle-intersect-circle (s/->Rectangle 0 0 1 1)
-                                            (s/->Circle [0 0] 1)))))
+                                            (s/->Circle [0 0] 1))))
+  (is (= false (s/rectangle-intersect-circle (s/->Rectangle 2 0 3 1)
+                                             (s/->Circle [0 0] 1))))
+  (is (= true (s/rectangle-intersect-circle (s/->Rectangle 0.5 0.5 10 10)
+                                            (s/->Circle [0 0] 1))))
+  (is (= true (s/rectangle-intersect-circle (s/->Rectangle -1 -1 1 1)
+                                            (s/->Circle [0 0] 0.5))))
+  (is (= true (s/rectangle-intersect-circle (s/->Rectangle -1 -5 1 5)
+                                            (s/->Circle [-1 0] 1)))))

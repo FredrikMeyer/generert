@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '20.0.1'
+          java-version: '21.0.1'
 
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@5.0
@@ -44,4 +44,4 @@ jobs:
 
       - name: Run tests
         run: |
-          lein test
+          clojure -X:test

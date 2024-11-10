@@ -11,6 +11,8 @@
   :ret ::point)
 
 (defn add-pts [y x]
+  {:pre [(seqable? y)
+         (seqable? x)]}
   (let [[p1 p2] y
         [q1 q2] x]
     [(+ p1 q1) (+ p2 q2)]))
@@ -19,8 +21,10 @@
   :args ::args-mult
   :ret ::point)
 
-(defn mult [^double c [a b]]
-  [(* c a) (* c b)])
+(defn mult [c [a b :as p]]
+  {:pre [(number? c)]}
+  (with-meta
+    [(* c a) (* c b)] (meta p)))
 
 
 (s/fdef diff-pts
@@ -31,14 +35,19 @@
   (let [negy (mult -1 y)]
     (add-pts x negy)))
 
+(defn middle-pt [x y]
+  (let [diff (diff-pts y x)
+        halfed (mult 0.5 diff)]
+    (add-pts x halfed)))
+
 (s/fdef normalize
   :args (s/cat :p ::point)
   :ret ::point)
 
-(defn normalize [[a b]]
+(defn normalize [[a b :as p]]
   (let [l2 (+ (* a a) (* b b))
         l (Math/sqrt l2)]
-    [(/ a l) (/ b l)]))
+    (with-meta [(/ a l) (/ b l)] (meta p))))
 
 
 (s/fdef distance-sq
@@ -63,3 +72,6 @@
 
 (defn neq [pt]
   (mult -1 pt))
+
+(comment
+  (st/instrument `add-pts))

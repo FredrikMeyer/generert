@@ -3,7 +3,7 @@
 Tests:
 
 ```
-lein tests
+clj -Xtest
 ```
 
 ## Linting

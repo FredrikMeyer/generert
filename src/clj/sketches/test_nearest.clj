@@ -1,4 +1,4 @@
-(ns test_nearest.core
+(ns sketches.test-nearest
   (:require [quil.core :as q]
             [tools.random :as r]
             [tools.quadtree :as quad]

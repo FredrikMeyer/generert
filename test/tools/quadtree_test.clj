@@ -1,4 +1,4 @@
-(ns tools.test-quadtree
+(ns tools.quadtree-test
   [:require
    [clojure.test :refer :all]
    [tools.quadtree :as q]])
@@ -21,5 +21,3 @@
         (is (= [0.24 0.24] (q/closest-point-2 t [0.25 0])))
         ;; (is (= (q/closest-point-2 t )))
         ))))
-
-q/closest-point-2

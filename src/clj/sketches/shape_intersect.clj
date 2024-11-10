@@ -27,13 +27,16 @@
   (q/with-fill [100 100]
     (q/text (str state) 50 50))
   (let [[x y] (:pos state)]
-    (if (shapes/rectangle-intersect-circle (shapes/->Rectangle cx cy (+ cx 100) (+ cy 100))
-                                           (shapes/->Circle [x y] 25))
+    (if (or (shapes/rectangle-intersect-circle (shapes/->Rectangle cx cy (+ cx 100) (+ cy 100))
+                                               (shapes/->Circle [x y] 25))
+            (shapes/circle-intersect-circle (shapes/->Circle [x y] 25)
+                                            (shapes/->Circle [200 200] 100)))
       (q/with-fill [50 100 100]
         (q/ellipse x y 50 50))
       (q/ellipse x y 50 50)))
 
   (q/rect cx cy 100 100)
+  (q/ellipse 200 200 200 200)
 
   ;; (q/no-loop)
   )

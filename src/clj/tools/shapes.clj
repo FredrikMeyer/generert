@@ -54,7 +54,32 @@
              (> xmin (:xmax r2))
              (< xmax (:xmin r2))))))
 
+(defn is-above [{:keys [center]} {:keys [ymax]}]
+  (let [[_ y] center]
+    (> y ymax)))
+
+(defn is-below [{:keys [center]} {:keys [ymin]}]
+  (let [[_ y] center]
+    (< y ymin)))
+
+(defn is-left-of [{:keys [center]} {:keys [xmin]}]
+  (let [[x _] center]
+    (< x xmin)))
+
+(defn is-right-of [{:keys [center]} {:keys [xmax]}]
+  (let [[x _] center]
+    (> x xmax)))
+
+(defn circle-dist-to-edge [{:keys [center radius]} {:keys [ymin]}])
+
+(defn closest-corner [{:keys [center]} {:keys [xmin xmax ymin ymax]}]
+  (let [corners [[xmin ymin] [xmin ymax] [xmax ymin] [xmax ymax]]]
+    (->> corners
+         (sort-by (fn [p] (pts/distance-sq p center)))
+         (first))))
+
 (defn rectangle-intersect-circle [rect circle]
-  (let []))
+  (let [corner (closest-corner circle rect)]
+    (< (pts/distance-sq corner (:center circle)) (:radius circle))))
 
 

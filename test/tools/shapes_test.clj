@@ -17,7 +17,9 @@
   (is (= true (s/circle-intersect-circle (s/->Circle [0 0] 1)
                                          (s/->Circle [1 1] 2))))
   (is (= false (s/circle-intersect-circle (s/->Circle [0 0] 1)
-                                          (s/->Circle [4 4] 1)))))
+                                          (s/->Circle [4 4] 1))))
+  (is (= false (s/circle-intersect-circle (s/->Circle [200 450] 50)
+                                          (s/->Circle [450 450] 50)))))
 
 (deftest point-intersect-rectangle-test
   (is (= true (s/point-intersect-rectangle [1 1] (s/->Rectangle 0 0 2 2))))

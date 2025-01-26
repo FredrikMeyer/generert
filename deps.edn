@@ -6,16 +6,12 @@
   org.clojure/test.check {:mvn/version "1.1.1"},
   criterium/criterium {:mvn/version "0.4.6"},
   quil/quil {:mvn/version "4.3.1563"},
-  org.clojure/data.priority-map {:mvn/version "1.1.0"}},
+  org.clojure/data.priority-map {:mvn/version "1.2.0"}},
  :aliases
- {:lein2deps {:deps
-              {io.github.borkdude/lein2deps
-               {:git/sha "1fdaf45577edc9a6aeee027501e50924b9b793f5"}},
-              :ns-default lein2deps.build}
-  :test/env {:extra-paths ["test" "dev" "classes"]
+ {:test/env {:extra-paths ["test" "dev" "classes"]
              :jvm-opts ["-Djdk.attach.allowAttachSelf"]}
   :test {:extra-paths ["test" "dev" "classes"]
-         :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
+         :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
          :main-opts   ["--main" "kaocha.runner"]
          :exec-fn kaocha.runner/exec-fn
          :exec-args {:randomize? false

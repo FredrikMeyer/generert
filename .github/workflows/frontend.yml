@@ -35,7 +35,7 @@ jobs:
           role-session-name: github-actions-publish
           aws-region: eu-north-1
       - name: Publish docs
-        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        if: github.ref == 'refs/heads/master' || (github.event.action == 'closed' && github.event.pull_request.merged == true)
         run: |
           cd dist
           aws s3 sync . s3://generert-cloudfrontands3s3bucketb81f9695-1vubdjwpyg0vm/ --delete --no-progress

@@ -6,6 +6,9 @@ Tests:
 clj -Xtest
 ```
 
+GIT LFS is used.
+https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage
+
 ## Linting
 
 Linted with [clj-kondo](https://github.com/clj-kondo/clj-kondo).

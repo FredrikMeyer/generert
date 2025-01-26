@@ -83,7 +83,7 @@
     :size [w h]
     :setup setup
     :update update-state
-    :mouse-clicked (d/save-on-click-handler "template")
+    :mouse-clicked (d/save-on-click-handler "line_intersections")
     :key-pressed d/redraw
     :draw draw-state
     :features [:keep-on-top :no-bind-output :pause-on-error]

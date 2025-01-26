@@ -4,6 +4,7 @@ import texture from "../../images/texture-15128758_0.43535608.png";
 import texture2 from "../../images/texture-15128758_0.058291435.png";
 import concentric from "../../images/concentric/concentric-15128758_0.9700706.png";
 import twoLines from "../../images/two-lines/two-lines-15128758_0.68674845.png";
+import nonIntersectingLines from "../../images/line_intersections/15128758_0.57497156.png";
 import githubIcon from "./githubIcon.svg";
 
 function Header() {
@@ -37,6 +38,12 @@ const images: Image[] = [
     description: "Concentric circles drawn with some randomness.",
   },
   { name: "Two Lines", url: twoLines, description: "Lines between two lines." },
+  {
+    name: "Non-intersecting lines",
+    url: nonIntersectingLines,
+    description:
+      "Many random lines on a circle with non-intersecting condition.",
+  },
 ];
 
 function Gallery({

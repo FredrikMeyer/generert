@@ -85,8 +85,19 @@
 (defn line-intersect-line [l1 l2]
   (let [{:keys [x1 y1 x2 y2]} l1
         eq1 (alg/points->eqn [x1 y1] [x2 y2])
-        eq2 (alg/points->eqn [(:x1 l2) (:y1 l2)] [(:x2 l2) (:y2 l2)])]
-    (alg/intersect-lines eq1 eq2)))
+        eq2 (alg/points->eqn [(:x1 l2) (:y1 l2)] [(:x2 l2) (:y2 l2)])
+        intersection     (alg/intersect-lines eq1 eq2)]
+    (if-let [[x y] intersection]
+      (if (and (<= (min x1 x2) x)
+               (<= x (max x1 x2))
+               (<= (min y1 y2) y)
+               (<= y (max y1 y2))
+               (<= (min (:x1 l2) (:x2 l2)) x)
+               (<= x (max (:x1 l2) (:x2 l2)))
+               (<= (min (:y1 l2) (:y2 l2)) y)
+               (<= y (max (:y1 l2) (:y2 l2))))
+        intersection
+        nil))))
 
 (extend-protocol Intersects
   Circle

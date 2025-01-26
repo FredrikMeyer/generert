@@ -8,6 +8,7 @@
         c (- (* y1 x2) (* x1 y2))]
     [a b c]))
 
+;; TODO: should handle cases like this <-->   <---> (i.e parallel lines)
 (defn intersect-lines
   "Given two equations of the form ax+by+c=0, return the point of intersection."
   [[a b c] [d e f]]
@@ -40,5 +41,6 @@
                   (if (not= ratio curr-ratio)
                     false
                     (recur (rest r1) (rest r2) curr-ratio))))))))))
+
 
 

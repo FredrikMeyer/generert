@@ -45,6 +45,8 @@
 
 (deftest line-intersects-line
   (is (= true (s/intersects (s/->LineSegment 0 0 1 1)
-                              (s/->LineSegment 0 1 1 0))))
+                            (s/->LineSegment 0 1 1 0))))
   (is (= true (s/intersects (s/->Point 0 0)
-                              (s/->LineSegment 1 1 -1 -1)))))
+                            (s/->LineSegment 1 1 -1 -1))))
+  (is (= false (s/intersects (s/->LineSegment 0 0 1 0)
+                             (s/->LineSegment 2 0 3 0)))))

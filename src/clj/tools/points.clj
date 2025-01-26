@@ -56,11 +56,13 @@
 
 (defn distance-sq
   "Returns the squared distance between two points [a,b] and [x,y]."
-  [[a b] [x y]]
-  (let [neg (mult -1 [x y])
-        [u v] (add-pts [a b] neg)
-        l2 (+ (* u u) (* v v))]
-    l2))
+  ([[a b] [x y]]
+   (let [neg (mult -1 [x y])
+         [u v] (add-pts [a b] neg)
+         l2 (+ (* u u) (* v v))]
+     l2))
+  ([a b x y]
+   (distance-sq [a b] [x y])))
 
 (comment
   (st/check `distance-sq)

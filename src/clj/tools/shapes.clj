@@ -1,6 +1,7 @@
 (ns tools.shapes
   (:require
    [tools.points :as pts]
+   [tools.algebra :as alg]
    [quil.core :as q]))
 
 (defprotocol Intersects
@@ -31,6 +32,10 @@
   (draw [_]
     (q/rect xmin ymin (- xmax xmin) (- ymax ymin))))
 
+(defrecord LineSegment [^double x1 ^double y1 ^double x2 ^double y2]
+  Drawable
+  (draw [_]
+    (q/line x1 y1 x2 y2)))
 (defn pt-intersect-circle [pt circle]
   (let [dist-center (Math/sqrt (pts/distance-sq pt (:center circle)))
         dist (- dist-center (:radius circle))]
@@ -77,6 +82,12 @@
         [r1 r2] (mapv :radius [c1 c2])]
     (<= dist-centers (+ r1 r2))))
 
+(defn line-intersect-line [l1 l2]
+  (let [{:keys [x1 y1 x2 y2]} l1
+        eq1 (alg/points->eqn [x1 y1] [x2 y2])
+        eq2 (alg/points->eqn [(:x1 l2) (:y1 l2)] [(:x2 l2) (:y2 l2)])]
+    (alg/intersect-lines eq1 eq2)))
+
 (extend-protocol Intersects
   Circle
   (intersects [this other]
@@ -105,6 +116,19 @@
             (pt-intersect-circle this other)
             (= other-class Rectangle)
             (point-intersect-rectangle this other)
+            (= other-class LineSegment)
+            (intersects other this)
+            :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
+
+  LineSegment
+  (intersects [this other]
+    (let [other-class (class other)]
+      (cond (= other-class (class this))
+            (not (nil? (line-intersect-line this other)))
+            (= other-class Point)
+            (alg/line-contains-pt
+             (alg/points->eqn [(:x1 this) (:y1 this)] [(:x2 this) (:y2 this)])
+             [(:x other) (:y other)])
             :else (throw (Exception. (str "Ops. Other class: " (class other))))))))
 
 (extend-protocol Positioned

@@ -42,3 +42,9 @@
                                             (s/->Circle [0 0] 0.5))))
   (is (= true (s/rectangle-intersect-circle (s/->Rectangle -1 -5 1 5)
                                             (s/->Circle [-1 0] 1)))))
+
+(deftest line-intersects-line
+  (is (= true (s/intersects (s/->LineSegment 0 0 1 1)
+                              (s/->LineSegment 0 1 1 0))))
+  (is (= true (s/intersects (s/->Point 0 0)
+                              (s/->LineSegment 1 1 -1 -1)))))

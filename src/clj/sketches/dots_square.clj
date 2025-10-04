@@ -79,7 +79,7 @@
     (q/rect border border square-diameter square-diameter)
     (q/rect (- border 5) (- border 5) (+ 10 square-diameter) (+ 10 square-diameter))
 
-    ;; background oise
+    ;; background noise
     (q/with-stroke [100 20]
       (doseq [_ (range 100000)]
         (let [rand-pt (r/random-pt b1 b2)]

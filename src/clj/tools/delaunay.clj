@@ -4,7 +4,9 @@
 
 ;; (set! *warn-on-reflection* true)
 
-(defn circumcircle  ^tools.shapes.Circle [^tools.shapes.Triangle triangle]
+(defn circumcircle
+  "Computes the circumcircle of a triangle."
+  ^tools.shapes.Circle [^tools.shapes.Triangle triangle]
   ;; translate [ax ay] -> [0 0]
   (let [{[ax ay] :a
          [bx by] :b

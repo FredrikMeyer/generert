@@ -29,6 +29,7 @@
   (draw [_]
     (q/ellipse x y 2 2)))
 
+;; https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 (defn barycentric-coordinates [^Triangle triangle ^Point p]
   (let [{{x1 :x y1 :y} :a
          {x2 :x y2 :y} :b

@@ -19,4 +19,7 @@
                      :fail-fast? true}}
   :outdated {;; Note that it is `:deps`, not `:extra-deps`
              :deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
-             :main-opts ["-m" "antq.core"]}}}
+             :main-opts ["-m" "antq.core"]}
+  :marginalia {:extra-deps {marginalia/marginalia {:mvn/version "0.9.2"}}
+               :main-opts  ["-m" "marginalia.main" "-n" "YourProjectName"
+                            "src" "test"]}}}

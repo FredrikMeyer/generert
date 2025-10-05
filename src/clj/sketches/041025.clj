@@ -1,13 +1,13 @@
 (ns sketches.041025
-  (:require
+    (:require
    [quil.core :as q]
    [quil.middleware :as m]
    [tools.drawing :as d]
    [tools.points :as p]
    [tools.random :as r]))
 
-(def w 500)
-(def h 500)
+(def w 700)
+(def h 700)
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
@@ -36,7 +36,7 @@
           (let [curr-dist (p/distance-sq curr pt)]
             (if (< curr-dist cand-dist)
               (recur (rest pts) curr curr-dist)
-              (recur (rest pts) cand cand-dist)))))))) 1
+              (recur (rest pts) cand cand-dist))))))))
 
 (defn draw []
   ;; (q/stroke 100)

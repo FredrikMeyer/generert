@@ -8,7 +8,8 @@
   quil/quil {:mvn/version "4.3.1563"},
   org.clojure/data.priority-map {:mvn/version "1.2.0"}},
  :aliases
- {:test/env {:extra-paths ["test" "dev" "classes"]
+ {:test/env {:extra-deps {vlaaad/reveal {:mvn/version "1.3.311"}}
+             :extra-paths ["test" "dev" "classes"]
              :jvm-opts ["-Djdk.attach.allowAttachSelf"]}
   :test {:extra-paths ["test" "dev" "classes"]
          :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}

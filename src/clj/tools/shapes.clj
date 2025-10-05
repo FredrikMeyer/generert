@@ -22,10 +22,31 @@
     (let [[x y] center]
       (q/ellipse x y (* 2 radius) (* 2 radius)))))
 
+(defrecord Triangle [a b c])
+
 (defrecord Point [x y]
   Drawable
   (draw [_]
     (q/ellipse x y 2 2)))
+
+(defn barycentric-coordinates [^Triangle triangle ^Point p]
+  (let [{{x1 :x y1 :y} :a
+         {x2 :x y2 :y} :b
+         {x3 :x y3 :y} :c} triangle
+        {x :x y :y} p
+        d (+ (* (- y2 y3)
+                (- x1 x3))
+             (* (- x3 x2)
+                (- y1 y3)))
+        a (/ (+ (* (- y2 y3)
+                   (- x x3))
+                (* (- x3 x2)
+                   (- y y3))) d)
+        b (/ (+ (* (- y3 y1)
+                   (- x x3))
+                (* (- x1 x3)
+                   (- y y3))) d)]
+    [a b (- 1 (+ a b))]))
 
 (defrecord Rectangle [^double xmin ^double ymin ^double xmax ^double ymax]
   Drawable
@@ -76,7 +97,7 @@
         (let [edge (closest-edge circle rect)]
           (< (pts/distance-sq edge (:center circle)) (Math/pow (:radius circle) 2))))))
 
-(defn circle-intersect-circle [c1 c2]
+(defn circle-intersect-circle [^Circle c1 ^Circle c2]
   (let [dist-centers (Math/sqrt (pts/distance-sq (:center c1)
                                                  (:center c2)))
         [r1 r2] (mapv :radius [c1 c2])]
@@ -87,7 +108,7 @@
         eq1 (alg/points->eqn [x1 y1] [x2 y2])
         eq2 (alg/points->eqn [(:x1 l2) (:y1 l2)] [(:x2 l2) (:y2 l2)])
         intersection     (alg/intersect-lines eq1 eq2)]
-    (if-let [[x y] intersection]
+    (when-let [[x y] intersection]
       (if (and (<= (min x1 x2) x)
                (<= x (max x1 x2))
                (<= (min y1 y2) y)
@@ -98,6 +119,15 @@
                (<= y (max (:y1 l2) (:y2 l2))))
         intersection
         nil))))
+
+(defn triangle-intersect-point [^Triangle triangle ^Point p]
+  (let [[a b c] (barycentric-coordinates triangle p)]
+    (and (>= a 0)
+         (>= b 0)
+         (>= c 0)
+         (<= c 1)
+         (<= b 1)
+         (<= a 1))))
 
 (extend-protocol Intersects
   Circle
@@ -129,6 +159,8 @@
             (point-intersect-rectangle this other)
             (= other-class LineSegment)
             (intersects other this)
+            (= other-class Triangle)
+            (triangle-intersect-point other this)
             :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
 
   LineSegment
@@ -140,7 +172,14 @@
             (alg/line-contains-pt
              (alg/points->eqn [(:x1 this) (:y1 this)] [(:x2 this) (:y2 this)])
              [(:x other) (:y other)])
-            :else (throw (Exception. (str "Ops. Other class: " (class other))))))))
+            :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
+
+  Triangle
+  (intersects [this other]
+    (let [other-class (class other)]
+      (cond (= other-class Point)
+            (triangle-intersect-point this other)
+            :else (throw (Exception. (str "Ops. OTher class: " (class other))))))))
 
 (extend-protocol Positioned
   Circle

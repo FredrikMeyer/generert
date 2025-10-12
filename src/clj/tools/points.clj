@@ -10,12 +10,17 @@
   :args ::args-two-pts
   :ret ::point)
 
-(defn add-pts [y x]
-  {:pre [(seqable? y)
-         (seqable? x)]}
-  (let [[p1 p2] y
-        [q1 q2] x]
-    [(+ p1 q1) (+ p2 q2)]))
+(defn add-pts
+  ([y x]
+   {:pre [(seqable? y)
+          (seqable? x)]}
+   (let [[p1 p2] y
+         [q1 q2] x]
+     [(+ p1 q1) (+ p2 q2)]))
+  ([y x & rest]
+   (reduce (fn [acc curr]
+             (add-pts acc curr))
+           (add-pts x y) rest)))
 
 (s/fdef mult
   :args ::args-mult
@@ -25,7 +30,6 @@
   {:pre [(number? c)]}
   (with-meta
     [(* c a) (* c b)] (meta p)))
-
 
 (s/fdef diff-pts
   :args ::args-two-pts
@@ -49,7 +53,6 @@
         l (Math/sqrt l2)]
     (with-meta [(/ a l) (/ b l)] (meta p))))
 
-
 (s/fdef distance-sq
   :args ::args-two-pts
   :ret (s/and number? #(>= % 0)))
@@ -65,8 +68,7 @@
    (distance-sq [a b] [x y])))
 
 (comment
-  (st/check `distance-sq)
-  )
+  (st/check `distance-sq))
 
 (s/fdef neg
   :args (s/cat :p ::point)

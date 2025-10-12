@@ -18,20 +18,26 @@
   {})
 
 (defn random-triangle [[a b] [c d]]
-  (let [[a b c] (r/random-pts 3 [a b] [c d])]
-    (s/->Triangle a b c)))
+  (let [[[ax ay] [bx by] [cx cy]] (r/random-pts 3 [a b] [c d])]
+    (s/->Triangle (s/point ax ay)
+                  (s/point bx by)
+                  (s/point cx cy))))
 
 (defn draw []
   (doseq [n (range 10 w 70)
           m (range 10 h 70)]
     (let [triangle (random-triangle [n (+ n 50)] [m (+ m 50)])
           circumcircle (del/circumcircle triangle)
+          incircle (del/incircle triangle)
           {[x y] :center r :radius} circumcircle
-          {[ax ay] :a [bx by] :b [cx cy] :c} triangle]
+          {[xx yy] :center rr :radius} incircle
+          {{ax :x ay :y} :a {bx :x by :y} :b {cx :x cy :y} :c} triangle]
       (q/with-fill [0 0 100 50]
         (q/ellipse x y r r))
       (q/with-fill [3 100 100]
-        (q/triangle ax ay bx by cx cy)))))
+        (q/triangle ax ay bx by cx cy))
+      (q/with-fill [40 100 100]
+        (q/ellipse xx yy rr rr)))))
 
 (defn update-state [state]
   state)

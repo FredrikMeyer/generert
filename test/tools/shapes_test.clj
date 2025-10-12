@@ -5,13 +5,13 @@
 
 (deftest intersect-circle-test
   (is (= true
-         (s/pt-intersect-circle [0 0] (s/->Circle [0 0] 1))))
+         (s/pt-intersect-circle (s/point 0 0) (s/->Circle [0 0] 1))))
   (is (= false
-         (s/pt-intersect-circle [0 0] (s/->Circle [1 1] 0.5))))
+         (s/pt-intersect-circle (s/point 0 0) (s/->Circle [1 1] 0.5))))
   (is (= true
-         (s/pt-intersect-circle [2 2] (s/->Circle [0 0] 3))))
+         (s/pt-intersect-circle  (s/point 2 2) (s/->Circle [0 0] 3))))
   (is (= true
-         (s/pt-intersect-circle [2 2] (s/->Circle [0 0] 5)))))
+         (s/pt-intersect-circle (s/point  2 2) (s/->Circle [0 0] 5)))))
 
 (deftest circle-intersect-circle-test
   (is (= true (s/circle-intersect-circle (s/->Circle [0 0] 1)

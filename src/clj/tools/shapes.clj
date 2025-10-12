@@ -1,8 +1,9 @@
 (ns tools.shapes
   (:require
-   [tools.points :as pts]
+   [quil.core :as q]
    [tools.algebra :as alg]
-   [quil.core :as q]))
+   [tools.points :as pts]
+   [tools.points :as p]))
 
 (defprotocol Intersects
   (intersects [this other]))
@@ -22,12 +23,36 @@
     (let [[x y] center]
       (q/ellipse x y (* 2 radius) (* 2 radius)))))
 
-(defrecord Triangle [a b c])
+(defrecord Triangle [a b c]
+  Object
+  (toString [_]
+    (str "Triangle" a b c)))
 
 (defrecord Point [x y]
   Drawable
   (draw [_]
     (q/ellipse x y 2 2)))
+
+(defn point [x y]
+  (->Point x y))
+
+(defn point->tuple [point]
+  (let [{x :x y :y} point] [x y]))
+
+(defn triangle
+  ([tuples]
+   (let [[[ax ay] [bx by] [cx cy]] tuples]
+     (triangle (point ax ay)
+               (point bx by)
+               (point cx cy))))
+  ([p1 p2 p3]
+   {:pre [(not (alg/is-collinear (p/diff-pts (point->tuple p1)
+                                             (point->tuple p2))
+                                 (p/diff-pts (point->tuple p2)
+                                             (point->tuple p3))))]}
+   (->Triangle p1 p2 p3)))
+
+
 
 ;; https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 (defn barycentric-coordinates [^Triangle triangle ^Point p]
@@ -58,8 +83,26 @@
   Drawable
   (draw [_]
     (q/line x1 y1 x2 y2)))
+
+(defn line-segment [p1 p2]
+  (let [{x1 :x y1 :y} p1
+        {x2 :x y2 :y} p2]
+    (->LineSegment x1 y1 x2 y2)))
+
+(defn line-segment-points [line-segment]
+  (let [{x1 :x1 y1 :y1 x2 :x2 y2 :y2} line-segment]
+    [(point x1 y1)
+     (point x2 y2)]))
+
+(defn triangle-edges [^Triangle triangle]
+  (let [{a :a b :b c :c} triangle]
+    (set [(line-segment a b)
+          (line-segment b c)
+          (line-segment c a)])))
+
 (defn pt-intersect-circle [pt circle]
-  (let [dist-center (Math/sqrt (pts/distance-sq pt (:center circle)))
+  (let [{x :x y :y} pt
+        dist-center (Math/sqrt (pts/distance-sq [x y] (:center circle)))
         dist (- dist-center (:radius circle))]
     (<= dist 0)))
 
@@ -138,6 +181,8 @@
             (circle-intersect-circle this other)
             (= other-class Rectangle)
             (rectangle-intersect-circle other this)
+            (= other-class Point)
+            (intersects other this)
             :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
 
   Rectangle

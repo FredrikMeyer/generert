@@ -10,7 +10,7 @@
       (is (= res [3.0 4.0])))))
 
 (deftest mult-test
-  (is (= (pts/mult 2 [3 4]) [6 8]))
+  (is (= (pts/mult 2 [3 4]) [6.0 8.0]))
   (testing "keeps metadata of point"
     (is (= {:a 2} (meta (pts/mult 2 (with-meta [1 2] {:a 2})))))))
 

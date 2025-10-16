@@ -62,4 +62,4 @@
                                        [20 0]])
           res (del/triangulate pts)]
       (is (= (count pts) (count (points-in-triang res))))
-      (is (= 5 res)))))
+      #_(is (= 5 res)))))

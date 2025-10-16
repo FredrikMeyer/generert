@@ -44,12 +44,16 @@
                                             (s/->Circle [-1 0] 1)))))
 
 (deftest line-intersects-line
-  (is (= true (s/intersects (s/->LineSegment 0 0 1 1)
-                            (s/->LineSegment 0 1 1 0))))
+  (is (= true (s/intersects (s/->LineSegment (s/point 0 0) (s/point 1 1))
+                            (s/->LineSegment (s/point 0 1) (s/point 1 0)))))
+  (is (= true (s/intersects (s/line-segment 0 0 1 1)
+                            (s/line-segment 0 1 1 0))))
+  (is (= true (s/intersects (s/line-segment 0 1 1 0)
+                            (s/line-segment 0 0 1 1))))
   (is (= true (s/intersects (s/->Point 0 0)
-                            (s/->LineSegment 1 1 -1 -1))))
-  (is (= false (s/intersects (s/->LineSegment 0 0 1 0)
-                             (s/->LineSegment 2 0 3 0)))))
+                            (s/->LineSegment (s/point 1 1) (s/point -1 -1)))))
+  (is (= false (s/intersects (s/->LineSegment (s/point 0 0) (s/point 1 0))
+                             (s/->LineSegment (s/point 2 0) (s/point 3 0))))))
 
 (deftest triangle-intersects-point
   (is (= true (s/intersects (s/->Point 0.5 0.5) (s/->Triangle (s/->Point 0 0)

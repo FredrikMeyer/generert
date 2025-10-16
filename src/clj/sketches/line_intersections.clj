@@ -21,13 +21,6 @@
   (q/no-fill)
   {})
 
-(defn random-line []
-  (->> r/random
-       repeatedly
-       (take 4)
-       (map #(* w %))
-       (apply sh/->LineSegment)))
-
 (defn random-point-circle [r [a b]]
   (let [theta (r/random 0 (* 2 q/PI))
         x (+ a (* r (Math/cos theta)))
@@ -36,8 +29,8 @@
 
 (defn random-line-on-circle []
   (let [[a b] (random-point-circle 200 [cx cy])
-        [c d](random-point-circle (r/random 10 200) [a b])]
-    (sh/->LineSegment a b c d)))
+        [c d] (random-point-circle (r/random 10 200) [a b])]
+    (sh/line-segment a b c d)))
 
 (defn many-nonintersecting-lines [n]
   (loop [c n
@@ -49,22 +42,11 @@
           (recur (dec c) (conj lines l))))
       lines)))
 
-(defn line-length [l]
-  (let [{:keys [x1 y1 x2 y2]} l]
-    (Math/sqrt (p/distance-sq x1 y1 x2 y2))))
-
 (defn draw []
-  #_(let [lns (->> r/random
-                   repeatedly
-                   (take 52)
-                   (map #(* w %))
-                   (partition 4)
-                   (map #(apply sh/->LineSegment %)))]
-      (doseq [l lns]
-        (sh/draw l)))
+  
 
   (doseq [l (many-nonintersecting-lines 100000)]
-    (q/stroke-weight (/ (line-length l) (* 0.05 w)))
+    (q/stroke-weight (/ (sh/line-segment-length l) (* 0.05 w)))
     (sh/draw l)))
 
 (defn update-state [state]

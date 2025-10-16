@@ -1,8 +1,12 @@
-(ns tools.algebra)
+(ns tools.algebra 
+  (:require
+   [tools.points :as p]))
+
+;; (set! *unchecked-math* :warn-on-boxed)
 
 (defn points->eqn
   "Given two points, return its equation of the form ax+by+c=0."
-  [[x1 y1] [x2 y2]]
+  [[^double x1 ^double y1] [^double x2 ^double y2]]
   (let [a (- y2 y1)
         b (- x1 x2)
         c (- (* y1 x2) (* x1 y2))]
@@ -24,23 +28,26 @@
 
 (defn is-collinear
   "Given two vectors, return true if they are collinear."
-  [v1 v2]
-  (loop [r1 v1
-         r2 v2
-         curr-ratio nil]
-    (if (= (count r1) 0) true
-        (let [a (first r1)
-              b (first r2)]
-          (if (and (zero? a) (zero? b))
-            (recur (rest r1) (rest r2) nil)
-            (if (zero? a)
-              false
-              (let [ratio (/ b a)]
-                (if (nil? curr-ratio)
-                  (recur (rest r1) (rest r2) ratio)
-                  (if (not= ratio curr-ratio)
-                    false
-                    (recur (rest r1) (rest r2) curr-ratio))))))))))
+  ([v1 v2]
+   (loop [r1 v1
+          r2 v2
+          curr-ratio nil]
+     (if (= (count r1) 0) true
+         (let [a (first r1)
+               b (first r2)]
+           (if (and (zero? a) (zero? b))
+             (recur (rest r1) (rest r2) nil)
+             (if (zero? a)
+               false
+               (let [ratio (/ b a)]
+                 (if (nil? curr-ratio)
+                   (recur (rest r1) (rest r2) ratio)
+                   (if (not= ratio curr-ratio)
+                     false
+                     (recur (rest r1) (rest r2) curr-ratio))))))))))
+  ([p1 p2 p3]
+   (is-collinear (p/diff-pts p1 p2)
+                 (p/diff-pts p3 p2))))
 
 
 

@@ -34,7 +34,7 @@
           {{ax :x ay :y} :a {bx :x by :y} :b {cx :x cy :y} :c} triangle]
       (q/with-fill [0 0 100 50]
         (q/ellipse x y r r))
-      (q/with-fill [3 100 100]
+        (q/with-fill [3 100 100]
         (q/triangle ax ay bx by cx cy))
       (q/with-fill [40 100 100]
         (q/ellipse xx yy rr rr)))))

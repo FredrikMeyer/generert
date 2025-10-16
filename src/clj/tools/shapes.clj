@@ -24,6 +24,11 @@
       (q/ellipse x y (* 2 radius) (* 2 radius)))))
 
 (defrecord Triangle [a b c]
+  Drawable
+  (draw [{{x1 :x y1 :y} :a
+          {x2 :x y2 :y} :b
+          {x3 :x y3 :y} :c}]
+    (q/triangle x1 y1 x2 y2 x3 y3))
   Object
   (toString [_]
     (str "Triangle" a b c)))
@@ -52,7 +57,8 @@
                                              (point->tuple p3))))]}
    (->Triangle p1 p2 p3)))
 
-
+(defn triangle-points [triangle]
+  (vals triangle))
 
 ;; https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
 (defn barycentric-coordinates [^Triangle triangle ^Point p]
@@ -79,20 +85,27 @@
   (draw [_]
     (q/rect xmin ymin (- xmax xmin) (- ymax ymin))))
 
-(defrecord LineSegment [^double x1 ^double y1 ^double x2 ^double y2]
+(defrecord LineSegment [^Point p1 ^Point p2]
   Drawable
   (draw [_]
-    (q/line x1 y1 x2 y2)))
+    (let [{x1 :x y1 :y} p1
+          {x2 :x y2 :y} p2]
+      (q/line x1 y1 x2 y2))))
 
-(defn line-segment [p1 p2]
-  (let [{x1 :x y1 :y} p1
-        {x2 :x y2 :y} p2]
-    (->LineSegment x1 y1 x2 y2)))
+(defn line-segment
+  ([p1 p2]
+   (->LineSegment p1 p2))
+  ([x1 y1 x2 y2]
+   (->LineSegment (point x1 y1) (point x2 y2))))
 
 (defn line-segment-points [line-segment]
-  (let [{x1 :x1 y1 :y1 x2 :x2 y2 :y2} line-segment]
-    [(point x1 y1)
-     (point x2 y2)]))
+  (let [{p1 :p1 p2 :p2} line-segment]
+    [p1 p2]))
+
+(defn line-segment-length [this]
+  (let [{p1 :p1 p2 :p2} this]
+    (Math/sqrt (p/distance-sq (point->tuple p1)
+                              (point->tuple p2)))))
 
 (defn triangle-edges [^Triangle triangle]
   (let [{a :a b :b c :c} triangle]
@@ -148,19 +161,27 @@
     (<= dist-centers (+ r1 r2))))
 
 (defn line-intersect-line [l1 l2]
-  (let [{:keys [x1 y1 x2 y2]} l1
+  (let [{{x1 :x y1 :y} :p1
+         {x2 :x y2 :y} :p2} l1
         eq1 (alg/points->eqn [x1 y1] [x2 y2])
-        eq2 (alg/points->eqn [(:x1 l2) (:y1 l2)] [(:x2 l2) (:y2 l2)])
+        eq2 (alg/points->eqn [(get-in l2 [:p1 :x])
+                              (get-in l2 [:p1 :y])]
+                             [(get-in l2 [:p2 :x])
+                              (get-in l2 [:p2 :y])])
         intersection     (alg/intersect-lines eq1 eq2)]
     (when-let [[x y] intersection]
       (if (and (<= (min x1 x2) x)
                (<= x (max x1 x2))
                (<= (min y1 y2) y)
                (<= y (max y1 y2))
-               (<= (min (:x1 l2) (:x2 l2)) x)
-               (<= x (max (:x1 l2) (:x2 l2)))
-               (<= (min (:y1 l2) (:y2 l2)) y)
-               (<= y (max (:y1 l2) (:y2 l2))))
+               (<= (min (get-in l2 [:p1 :x])
+                        (get-in l2 [:p2 :x])) x)
+               (<= x (max (get-in l2 [:p1 :x])
+                          (get-in l2 [:p2 :x])))
+               (<= (min (get-in l2 [:p1 :y])
+                        (get-in l2 [:p2 :y])) y)
+               (<= y (max (get-in l2 [:p1 :y])
+                          (get-in l2 [:p2 :y]))))
         intersection
         nil))))
 
@@ -216,7 +237,9 @@
             (not (nil? (line-intersect-line this other)))
             (= other-class Point)
             (alg/line-contains-pt
-             (alg/points->eqn [(:x1 this) (:y1 this)] [(:x2 this) (:y2 this)])
+             (let [{x1 :x y1 :y} (:p1 this)
+                   {x2 :x y2 :y} (:p2 this)]
+               (alg/points->eqn [x1 y1] [x2 y2]))
              [(:x other) (:y other)])
             :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
 

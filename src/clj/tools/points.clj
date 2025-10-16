@@ -2,6 +2,8 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as st]))
 
+;; (set! *unchecked-math* :warn-on-boxed)
+
 (s/def ::point (s/coll-of (s/and number? #(not (Double/isNaN %))) :count 2 :kind vector?))
 (s/def ::args-two-pts (s/cat :y ::point :x ::point))
 (s/def ::args-mult (s/cat :c number? :p ::point))
@@ -14,8 +16,8 @@
   ([y x]
    {:pre [(seqable? y)
           (seqable? x)]}
-   (let [[p1 p2] y
-         [q1 q2] x]
+   (let [[^double p1 ^double p2] y
+         [^double q1 ^double q2] x]
      [(+ p1 q1) (+ p2 q2)]))
   ([y x & rest]
    (reduce (fn [acc curr]
@@ -26,7 +28,7 @@
   :args ::args-mult
   :ret ::point)
 
-(defn mult [c [a b :as p]]
+(defn mult [^double c [^double a ^double b :as p]]
   {:pre [(number? c)]}
   (with-meta
     [(* c a) (* c b)] (meta p)))
@@ -48,7 +50,7 @@
   :args (s/cat :p ::point)
   :ret ::point)
 
-(defn normalize [[a b :as p]]
+(defn normalize [[^double a ^double b :as p]]
   (let [l2 (+ (* a a) (* b b))
         l (Math/sqrt l2)]
     (with-meta [(/ a l) (/ b l)] (meta p))))
@@ -59,9 +61,9 @@
 
 (defn distance-sq
   "Returns the squared distance between two points [a,b] and [x,y]."
-  ([[a b] [x y]]
+  ([[^double a ^double b] [^double x ^double y]]
    (let [neg (mult -1 [x y])
-         [u v] (add-pts [a b] neg)
+         [^double u ^double v] (add-pts [a b] neg)
          l2 (+ (* u u) (* v v))]
      l2))
   ([a b x y]

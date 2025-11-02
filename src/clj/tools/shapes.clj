@@ -36,7 +36,12 @@
 (defrecord Point [x y]
   Drawable
   (draw [_]
-    (q/ellipse x y 2 2)))
+    (q/ellipse x y 2 2))
+  Comparable
+  (compareTo [_ {a :x b :y}]
+    (if-not (= x a)
+      (compare x a)
+      (compare y b))))
 
 (defn point [x y]
   (->Point x y))

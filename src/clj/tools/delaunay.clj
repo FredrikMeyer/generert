@@ -2,7 +2,6 @@
   (:require
    [tools.shapes :as s]
    [clojure.math :refer [sqrt]]
-   [clojure.set :as set]
    [tools.algebra :as alg]
    [tools.points :as p]))
 

@@ -15,21 +15,20 @@
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
   ;; (q/stroke 100 10)
-  {})
+  {:pts (map #(apply s/point %) (r/random-pts 50 [0 w] [0 h]))})
 
-(defn get-random-points [n]
-  (for [_ (range n)]
-    [(r/random 0 (- w 50))
-     (r/random 0 (- h 50))]))
+(defn drop-random-elt [xs]
+  (->> xs
+       (shuffle)
+       (drop 1)))
 
-
-
-(defn draw []
+(defn draw [state]
   (q/stroke 100)
   ;; (q/stroke-weight 1)
 
-  (let [n-points 10000
-        pts (map #(apply s/point %) (r/random-pts n-points [0 w] [0 h]))
+  (let [n-points 100
+        ;; pts (map #(apply s/point %) (r/random-pts n-points [0 w] [0 h]))
+        pts (:pts state)
         conv-hull (c/convex-hull pts)
         edges (->> (ch/copy-first-to-end conv-hull)
                    (partition 2 1))]
@@ -39,13 +38,16 @@
       (q/line x1 y1 x2 y2))))
 
 (defn update-state [state]
-  state)
+  (->
+   state
+   (update :pts #(conj % (apply s/point (r/random-pt [0 w] [0 h]))))
+   (update :pts #(drop-random-elt %))))
 
-(defn draw-state [_]
+(defn draw-state [state]
   (q/background 0)
-  (time (draw))
+  (time (draw state))
   (println "Done")
-  (q/no-loop))
+  #_(q/no-loop))
 
 #_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sketch []

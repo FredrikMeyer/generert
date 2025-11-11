@@ -69,6 +69,7 @@
   (q/background 0)
   (q/frame-rate 10)
   (time (draw state))
+  ;; (q/save-frame "circle-###.png")
   (println "Done")
   ;; (q/no-loop)
   )

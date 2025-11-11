@@ -3,11 +3,9 @@
    [quil.core :as q]
    [quil.middleware :as m]
    [tools.drawing :as d]
-   [tools.points :as p]
    [tools.shapes :as s]
    [fastmath.random :as fr]
-   [tools.delaunay :as del]
-   [tools.random :as r]))
+   [tools.delaunay :as del]))
 
 (def w 700)
 (def h 700)

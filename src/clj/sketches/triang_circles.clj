@@ -20,8 +20,8 @@
   {:alpha 0})
 
 (def colors [[13 32 100]
-             [30 30 94]
-             [60 30 90]])
+             #_[30 30 94]
+             #_[60 30 90]])
 
 (defn random-pt-on-circle [radius center]
   (let [phi (r/random 0 q/TWO-PI)

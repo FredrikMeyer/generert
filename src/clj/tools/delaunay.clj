@@ -31,10 +31,10 @@
                             (* cy' cy')))
                   (* cx' (+ (* bx' bx')
                             (* by' by')))) d')]
-    (s/->Circle [(+ ux' ax)
-                 (+ uy' ay)]
-                (Math/sqrt (+ (* ux' ux')
-                              (* uy' uy'))))))
+    (s/->Circle  (s/point (+ ux' ax)
+                          (+ uy' ay))
+                 (Math/sqrt (+ (* ux' ux')
+                               (* uy' uy'))))))
 
 (defn incircle [^tools.shapes.Triangle triangle]
   ;; Notation from

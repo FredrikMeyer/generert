@@ -1,6 +1,7 @@
 (ns tools.points
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.test.alpha :as st]))
+            [clojure.spec.test.alpha :as st]
+            ))
 
 ;; (set! *unchecked-math* :warn-on-boxed)
 

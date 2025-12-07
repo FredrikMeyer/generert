@@ -30,3 +30,8 @@ Linted with [clj-kondo](https://github.com/clj-kondo/clj-kondo).
 ```
 ffmpeg -framerate 10 -i circle-%03d.png -vf "scale=320:-1:flags=lanczos" -c:v gif output.gif
 ```
+
+## Check out
+
+Preset colors
+https://github.com/thi-ng/color/blob/master/src/presets.org

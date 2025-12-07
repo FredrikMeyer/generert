@@ -1,4 +1,4 @@
-(ns tools.algebra 
+(ns tools.algebra
   (:require
    [tools.points :as p]))
 

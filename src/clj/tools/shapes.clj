@@ -2,8 +2,8 @@
   (:require
    [quil.core :as q]
    [tools.algebra :as alg]
-   [tools.points :as pts]
-   [tools.points :as p]))
+   [tools.lines :as l]
+   [tools.points :as pts]))
 
 (defprotocol Intersects
   (intersects [this other]))
@@ -16,12 +16,6 @@
 
 (defprotocol Movable
   (update-pos [this new-pos]))
-
-(defrecord Circle [center radius]
-  Drawable
-  (draw [{:keys [center radius]}]
-    (let [[x y] center]
-      (q/ellipse x y (* 2 radius) (* 2 radius)))))
 
 (defrecord Triangle [a b c]
   Drawable
@@ -43,8 +37,11 @@
       (compare x a)
       (compare y b))))
 
-(defn point [x y]
-  (->Point x y))
+(defn point
+  ([x y]
+   (->Point x y))
+  ([[x y]]
+   (->Point x y)))
 
 (defn point->tuple [point]
   (let [{x :x y :y} point] [x y]))
@@ -56,10 +53,10 @@
                (point bx by)
                (point cx cy))))
   ([p1 p2 p3]
-   {:pre [(not (alg/is-collinear (p/diff-pts (point->tuple p1)
-                                             (point->tuple p2))
-                                 (p/diff-pts (point->tuple p2)
-                                             (point->tuple p3))))]}
+   {:pre [(not (alg/is-collinear (pts/diff-pts (point->tuple p1)
+                                               (point->tuple p2))
+                                 (pts/diff-pts (point->tuple p2)
+                                               (point->tuple p3))))]}
    (->Triangle p1 p2 p3)))
 
 (defn triangle-points [triangle]
@@ -85,6 +82,12 @@
                    (- y y3))) d)]
     [a b (- 1 (+ a b))]))
 
+(defrecord Circle [center radius]
+  Drawable
+  (draw [{:keys [center radius]}]
+    (let [[x y] (point->tuple center)]
+      (q/ellipse x y (* 2 radius) (* 2 radius)))))
+
 (defrecord Rectangle [^double xmin ^double ymin ^double xmax ^double ymax]
   Drawable
   (draw [_]
@@ -103,14 +106,20 @@
   ([x1 y1 x2 y2]
    (->LineSegment (point x1 y1) (point x2 y2))))
 
+(defn line-segment-orthogonal [segment]
+  (let [{{x1 :x y1 :y} :p1 {x2 :x y2 :y} :p2} segment
+        [a b] (pts/diff-pts [x2 y2] [x1 y1])
+        [c d] (pts/add-pts [x1 y1] [(* -1 b) a])]
+    (line-segment (point x1 y1) (point c d))))
+
 (defn line-segment-points [line-segment]
   (let [{p1 :p1 p2 :p2} line-segment]
     [p1 p2]))
 
 (defn line-segment-length [this]
   (let [{p1 :p1 p2 :p2} this]
-    (Math/sqrt (p/distance-sq (point->tuple p1)
-                              (point->tuple p2)))))
+    (Math/sqrt (pts/distance-sq (point->tuple p1)
+                                (point->tuple p2)))))
 
 (defn triangle-edges [^Triangle triangle]
   (let [{a :a b :b c :c} triangle]
@@ -120,7 +129,7 @@
 
 (defn pt-intersect-circle [pt circle]
   (let [{x :x y :y} pt
-        dist-center (Math/sqrt (pts/distance-sq [x y] (:center circle)))
+        dist-center (Math/sqrt (pts/distance-sq [x y] (point->tuple (:center circle))))
         dist (- dist-center (:radius circle))]
     (<= dist 0)))
 
@@ -173,7 +182,7 @@
                               (get-in l2 [:p1 :y])]
                              [(get-in l2 [:p2 :x])
                               (get-in l2 [:p2 :y])])
-        intersection     (alg/intersect-lines eq1 eq2)]
+        intersection         (alg/intersect-lines eq1 eq2)]
     (when-let [[x y] intersection]
       (if (and (<= (min x1 x2) x)
                (<= x (max x1 x2))
@@ -199,6 +208,14 @@
          (<= b 1)
          (<= a 1))))
 
+(defn line-intersects-circle [segment circle]
+  (let [{{x1 :x y1 :y} :p1 {x2 :x y2 :y} :p2} segment
+        {{cx :x cy :y} :center r :radius} circle
+        closest-pt (l/closest-point-on-line [[x1 y1] [x2 y2]] [cx cy])]
+    (< (pts/distance-sq [cx cy] closest-pt) (* r r))
+    ))
+
+
 (extend-protocol Intersects
   Circle
   (intersects [this other]
@@ -209,6 +226,8 @@
             (rectangle-intersect-circle other this)
             (= other-class Point)
             (intersects other this)
+            (= other-class LineSegment)
+            (line-intersects-circle other this)
             :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
 
   Rectangle
@@ -246,6 +265,8 @@
                    {x2 :x y2 :y} (:p2 this)]
                (alg/points->eqn [x1 y1] [x2 y2]))
              [(:x other) (:y other)])
+            (= other-class Circle)
+            (line-intersects-circle this other)
             :else (throw (Exception. (str "Ops. Other class: " (class other)))))))
 
   Triangle
@@ -285,3 +306,22 @@
                    (+ ymin dy)
                    (+ xmax dx)
                    (+ ymax dy)))))
+
+(defmulti encloses? (fn [container thing] [(class container) (class thing)]))
+
+(defmethod encloses? :default [a b]
+  (throw (ex-info "no contains? implementation" {:container (class a) :thing (class b)})))
+
+(defmethod encloses? [Circle Point] [c p]
+  (let [{{cx :x  cy :y} :center r :radius} c
+        d2 (pts/distance-sq [cx cy] (point->tuple p))]
+    (<= d2 (* r r))))
+
+(defmethod encloses? [Triangle Point] [t p]
+  (triangle-intersect-point t p))
+
+
+(defmethod encloses? [Triangle Circle] [t c]
+  (and (encloses? t (:center c))
+       (let [edges (triangle-edges t)]
+         (not-any? #(intersects % c) edges))))

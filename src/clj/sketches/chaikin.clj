@@ -23,7 +23,7 @@
         (q/line p1 p2)
         (recur (rest ps))))))
 
-(defn draw []
+(defn draw [_]
   (q/stroke 100)
 
   (comment
@@ -64,7 +64,7 @@
 
 (defn draw-state [_]
   (q/background 0)
-  (time (draw))
+  (time (draw nil))
   (println "Done")
   (q/no-loop))
 

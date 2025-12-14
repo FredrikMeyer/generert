@@ -3,12 +3,13 @@
    [quil.core :as q]
    [quil.middleware :as m]
    [tools.chaikin :as c]
+   [template.dynamic :as dyn]
    [tools.drawing :as d]))
 (def w 800)
 (def h 800)
 
-(def cx (/ w 2))
-(def cy (/ h 2))
+(reset! dyn/draw-height h)
+(reset! dyn/draw-width w)
 
 (defn setup []
   (q/color-mode :hsb 100 100 100 100)
@@ -16,7 +17,9 @@
   (q/no-fill)
   {})
 
-(defn draw []
+(defn draw [_]
+  (q/stroke 100 100)
+  (q/background 0)
   (let [lower-curve [[200 600] [400 500] [600 200] [200 200] ]
         chaik (c/chaikin-curve lower-curve 10)]
     (q/begin-shape :points)
@@ -30,7 +33,7 @@
 
 (defn draw-state [state]
   (q/background 0)
-  (time (draw))
+  (time (draw nil))
   (println "Done")
   (q/no-loop))
 

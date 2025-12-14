@@ -13,8 +13,8 @@
 (defn update-state [state]
   state)
 
-(def ^:dynamic *draw-width* 700)
-(def ^:dynamic *draw-height* 700)
+(def draw-width (atom 700))
+(def draw-height (atom 700))
 
 (def ^:dynamic *loop* false)
 
@@ -33,9 +33,11 @@
 
 (defn sketch
   ([draw]
+   (sketch setup draw))
+  ([setup draw]
    (q/defsketch #_:clj-kondo/ignore chaikin
      :title "You spin my circle right round"
-     :size [*draw-width* *draw-height*]
+     :size [@draw-width @draw-height]
      :setup setup
      :update update-state
      :mouse-clicked (call-with-filename d/save-on-click-handler)

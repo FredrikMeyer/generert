@@ -1,7 +1,6 @@
 (ns template.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]
-            [tools.drawing :as d]))
+            [template.dynamic :as dyn]))
 
 (def w 900)
 (def h 900)
@@ -15,26 +14,18 @@
   (q/no-fill)
   {})
 
-(defn draw [])
+(defn draw [_])
 
 (defn update-state [state]
   state)
 
 (defn draw-state [state]
   (q/background 0)
-  (time (draw))
+  (time (draw state))
   (println "Done")
   (q/no-loop))
 
-#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
-(defn sketch []
-  (q/defsketch #_:clj-kondo/ignore texture
-    :title "You spin my circle right round"
-    :size [w h]
-    :setup setup
-    :update update-state
-    :mouse-clicked (d/save-on-click-handler "template")
-    :key-pressed d/redraw
-    :draw draw-state
-    :features [:keep-on-top :no-bind-output :pause-on-error]
-    :middleware [m/fun-mode m/pause-on-error]))
+(comment
+  (reset! dyn/draw-height h)
+  (reset! dyn/draw-width w)
+  (dyn/sketch #'draw))

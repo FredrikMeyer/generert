@@ -9,6 +9,18 @@ clj -Xtest
 GIT LFS is used.
 https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage
 
+## Shortcut in Emacs
+
+In my Cider configuration I have this.
+
+```elisp
+  (defun run-sketch ()
+    (interactive)
+    (cider-interactive-eval "(require 'template.dynamic)(reset! template.dynamic/draw-width w)(reset! template.dynamic/draw-height h)(template.dynamic/sketch #'draw)"))
+
+  (keymap-set cider-mode-map "C-c C-å" 'run-sketch)
+```
+
 ## Linting
 
 Linted with [clj-kondo](https://github.com/clj-kondo/clj-kondo).

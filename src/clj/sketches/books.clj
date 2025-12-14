@@ -107,7 +107,7 @@
                   (recur (+ x-so-far b-width space-between) (dec n-books)))
                 (recur x-so-far n-books)))))))))
 
-(defn draw []
+(defn draw [_]
 
   (q/with-translation [0 -50]
     (bookshelf {:b-height 500 :b-width 300 :n-shelves 6}))

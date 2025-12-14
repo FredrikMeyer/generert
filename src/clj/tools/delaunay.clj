@@ -54,7 +54,7 @@
                                         (p/mult c [cx cy])))
         s (* 0.5 (+ a b c))
         radius (sqrt (/ (* (- s a) (- s b) (- s c)) s))]
-    (s/->Circle center radius)))
+    (s/->Circle (s/point center) radius)))
 
 (defn supertriangle [pts]
   (let [min-x (- (apply min (map :x pts)) 0.5)

@@ -139,7 +139,7 @@
 
 (defn draw-state [_]
   (q/background 0)
-  (draw)
+  (draw _)
   ;; (time (draw))
   ;; (println "Done")
   ;; (q/no-loop)

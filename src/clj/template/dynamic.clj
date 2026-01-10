@@ -15,8 +15,9 @@
 
 (def draw-width (atom 700))
 (def draw-height (atom 700))
+(def update-state-fn (atom update-state))
 
-(def ^:dynamic *loop* false)
+(def loop? (atom false))
 
 (defmacro call-with-filename [fn-name]
   `(let [filename# (str *ns*)]
@@ -27,7 +28,7 @@
   (q/background 0)
   (time (draw prev-state))
   (println "Done")
-  (when-not *loop*
+  (when-not @loop?
     (q/no-loop)))
 
 
@@ -39,7 +40,7 @@
      :title "You spin my circle right round"
      :size [@draw-width @draw-height]
      :setup setup
-     :update update-state
+     :update @update-state-fn
      :mouse-clicked (call-with-filename d/save-on-click-handler)
      :key-pressed d/redraw
      :draw #(draw-state draw %)

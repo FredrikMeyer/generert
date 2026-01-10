@@ -1,0 +1,5 @@
+{:output-to "target/cljs/main.js"
+ :output-dir "target/cljs"
+ :asset-path "target/cljs"
+ :optimizations :none
+ :source-map true}

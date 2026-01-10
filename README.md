@@ -6,6 +6,17 @@ Tests:
 clj -Xtest
 ```
 
+## ClojureScript
+
+Build the ClojureScript bundle and open `cljs.html`:
+
+```
+clj -M:cljs
+```
+
+Then open `cljs.html` in a browser. The CLJS sketch uses the `#app` host div.
+`cljs.html` pulls in `processing.js` from a CDN, which Quil needs for CLJS sketches.
+
 GIT LFS is used.
 https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage
 

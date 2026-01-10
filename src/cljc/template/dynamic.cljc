@@ -1,4 +1,5 @@
 (ns template.dynamic
+  #?(:cljs (:require-macros [quil.core :as q]))
   (:require
    [quil.core :as q]
    [quil.middleware :as m]
@@ -19,9 +20,9 @@
 
 (def loop? (atom false))
 
-(defmacro call-with-filename [fn-name]
-  `(let [filename# (str *ns*)]
-     (~fn-name filename#)))
+(defn call-with-filename [fn-name]
+  (let [filename (str *ns*)]
+    (fn-name filename)))
 
 
 (defn draw-state [draw prev-state]
@@ -44,15 +45,14 @@
      :mouse-clicked (call-with-filename d/save-on-click-handler)
      :key-pressed d/redraw
      :draw #(draw-state draw %)
-     :features [:keep-on-top :no-bind-output :pause-on-error]
-     :middleware [m/fun-mode m/pause-on-error])))
+     #?@(:clj [:features [:keep-on-top :no-bind-output :pause-on-error]]
+         :cljs [:host "app"])
+     :middleware [m/fun-mode
+                  #?(:clj m/pause-on-error)])))
 
 
 
 ;; Example function to demonstrate usage
 (defn print-filename [filename]
   (println "The filename is:" filename))
-
-;; Usage
-
 

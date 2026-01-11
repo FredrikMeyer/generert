@@ -8,7 +8,8 @@
     (println "Saved")
     (println state)
     (println name)
-    (q/save-frame (str "images/" name "/" (abs (hash state)) "_" (q/random 0 1) ".tif"))
+    #?(:clj (q/save-frame (str "images/" name "/" (abs (hash state)) "_" (q/random 0 1) ".tif"))
+       :cljs (js/console.log "Save skipped (no file system in browser)."))
     state))
 
 (defn redraw [old-state event]

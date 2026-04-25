@@ -85,8 +85,11 @@
 (defrecord Circle [center radius]
   Drawable
   (draw [{:keys [center radius]}]
-    (let [[x y] (point->tuple center)]
+    (let [[x y] center]
       (q/ellipse x y (* 2 radius) (* 2 radius)))))
+
+(defn circle [center radius]
+  (->Circle center radius))
 
 (defrecord Rectangle [^double xmin ^double ymin ^double xmax ^double ymax]
   Drawable
@@ -319,6 +322,11 @@
 
 (defmethod encloses? [Triangle Point] [t p]
   (triangle-intersect-point t p))
+
+(defmethod encloses? [Circle Circle] [container thing]
+  (let [{c1 :center r1 :radius} container
+        {c2 :center r2 :radius} thing]
+    (< (Math/sqrt (pts/distance-sq c1 c2)) (- r1 r2))))
 
 
 (defmethod encloses? [Triangle Circle] [t c]

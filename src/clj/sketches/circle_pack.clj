@@ -203,7 +203,7 @@
         (println "Done iterating")
         circles))))
 
-(defn draw []
+(defn draw [_state]
 
   (q/stroke 100 100)
   ;; (q/no-stroke)
@@ -278,7 +278,7 @@
   (q/background 0)
   #_(q/with-fill [0 100]
       (q/rect 0 0 w h))
-  (time (draw))
+  (time (draw nil))
   (println "Done")
   (q/no-loop))
 
@@ -294,5 +294,4 @@
     :draw draw-state
     :features [:no-bind-output :pause-on-error]
     :middleware [m/fun-mode m/pause-on-error]))
-
 

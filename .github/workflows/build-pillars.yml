@@ -15,12 +15,12 @@ jobs:
         uses: actions/setup-java@v6.0.1
         with:
           distribution: 'zulu'
-          java-version: '21.0.1'
+          java-version: 25
 
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@13.5
         with:
-          cli: 1.12.0.1495  # Clojure CLI based on tools.deps
+          cli: 1.12.6.1673  # Clojure CLI based on tools.deps
           
           # (optional) To avoid rate limit errors please provide github token
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -85,7 +85,7 @@
 (defrecord Circle [center radius]
   Drawable
   (draw [{:keys [center radius]}]
-    (let [[x y] center]
+    (let [{x :x y :y} center]
       (q/ellipse x y (* 2 radius) (* 2 radius)))))
 
 (defn circle [center radius]

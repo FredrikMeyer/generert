@@ -49,7 +49,7 @@
            (.exit sketch-inst))
          (catch Exception e
            (println "Error stopping sketch:" (.getMessage e))))))
-   (q/defsketch #_:clj-kondo/ignore current-sketch
+   (q/defsketch current-sketch
      :title "You spin my circle right round"
      :size [@draw-width @draw-height]
      :setup (if (var? setup) @setup setup)

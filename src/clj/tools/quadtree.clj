@@ -6,7 +6,7 @@
             [clojure.spec.test.alpha :as stest]
             [clojure.spec.gen.alpha :as gen]
             [clojure.data.priority-map :as pm]
-            [clj-async-profiler.core :as prof]))
+            ))
 
 (def ^:dynamic *tree-capacity*
   "Defines the tree capacity. This is the capacity of each node in the tree."
@@ -143,7 +143,7 @@
             (update-in tree (concat key-list [::points]) #(conj % pt))))
 
         (throw (Exception.
-                (str "Point not inside region. Point: " (str pt) " Region: " (str (::region curr-node)))))))))
+                (str "Point not inside region. Point: " pt " Region: " (::region curr-node))))))))
 
 (defn insert-many [tree pts]
   (reduce (fn [acc curr] (insert acc curr)) tree pts))
@@ -161,7 +161,7 @@
               new-key-list (conj key-path new-region-key)]
           (if (nil? (get-in tree new-key-list)) key-path
               (recur new-key-list)))
-        (throw (Exception. (str "Point outside region.")))))))
+        (throw (Exception. "Point outside region."))))))
 
 (defn region->range [region]
   (let [[a b] (::top-left region)
@@ -301,7 +301,7 @@
   of the smallest regions neighbouring the region in the opposite direction."
   [tree neigbour-path dir]
   (when (nil? (get-in tree neigbour-path))
-    (throw (Exception. (str "Path is nil: " (str neigbour-path)))))
+    (throw (Exception. (str "Path is nil: " neigbour-path))))
 
   (loop [candidates [neigbour-path]
          neigbours []]

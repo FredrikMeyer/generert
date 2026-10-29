@@ -1,0 +1,4 @@
+{:title "Non-intersecting lines"
+ :description "Many random lines on a circle with non-intersecting condition."
+ :sketch sketches.line-intersections
+ :published "2025-01-26"}

@@ -5,6 +5,8 @@ target/
 .lein-repl-history
 .lein-failures
 
-images/
+images/**
+!images/**/
+!images/**/*.edn
 .clj-kondo/.cache/
 /.lsp
